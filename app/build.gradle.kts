@@ -48,5 +48,13 @@ dependencies {
     /**
      *
      */
+// https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
+    /**
+     * android material package
+     */
+
+    // https://mvnrepository.com/artifact/com.google.android.material/material
+    implementation("com.google.android.material:material:1.12.0")
 }

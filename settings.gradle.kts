@@ -10,14 +10,7 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
 
-        /**
-         * Maven for newpipedExtractor
-         */
-        maven(url = "https://jitpack.io")
 
-        /**
-         *
-         */
 
     }
 }
@@ -26,6 +19,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven(url = "https://jitpack.io")
     }
 }
 
