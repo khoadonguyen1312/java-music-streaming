@@ -8,11 +8,13 @@ import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.Service.DynamicDownloader;
 import com.khoadonguyen.java_music_streaming.Service.Extractor;
 
+import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
+import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 
@@ -29,7 +31,7 @@ public class DynamicYoutubeExtractor implements Extractor {
     public CompletableFuture<Song> gsong(String url) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                Song song;
+
                 YoutubeService youtubeService = initService();
 
                 StreamExtractor streamExtractor = youtubeService.getStreamExtractor(url);
@@ -37,11 +39,10 @@ public class DynamicYoutubeExtractor implements Extractor {
                 if (streamExtractor != null) {
                     streamExtractor.fetchPage();
                     Log.d(tag, "lấy thành công streamExtractor cho video có url :" + url);
-                    song = new Song(streamExtractor.getId(),
-                            streamExtractor.getUrl(),
-                            streamExtractor.getAudioStreams(), Source.YOUTUBE, streamExtractor.getName(),
-                            streamExtractor.getThumbnails(), streamExtractor.getSubtitles(MediaFormat.VTT));
+                    Song song = new Song.Builder().title(streamExtractor.getName()).build();
+
                     Log.d(tag, "tra ve thanh cong song object voi ten :" + song.getTitle());
+
                     return song;
                 }
             } catch (ExtractionException e) {
@@ -56,7 +57,32 @@ public class DynamicYoutubeExtractor implements Extractor {
 
     @Override
     public CompletableFuture<List<Song>> search(String query, Location location) {
-        return null;
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                List<Song> songs;
+                YoutubeService youtubeService = initService();
+
+                SearchExtractor searchExtractor = youtubeService.getSearchExtractor(query);
+
+                if (searchExtractor != null) {
+                    searchExtractor.fetchPage();
+                    List<InfoItem> infoItems = searchExtractor.getInitialPage().getItems();
+                    for (var infoitem : infoItems) {
+
+
+                    }
+                }
+            } catch (RuntimeException e) {
+                throw new RuntimeException(e);
+            } catch (ExtractionException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+
+            return null;
+        });
     }
 
     @Override

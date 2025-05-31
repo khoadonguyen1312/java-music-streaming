@@ -28,15 +28,21 @@ public class DynamicSoundCloudExtractor implements Extractor {
     public CompletableFuture<Song> gsong(String url) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                Song song;
+
                 SoundcloudService soundcloudService = initService();
                 StreamExtractor streamExtractor = soundcloudService.getStreamExtractor(url);
                 if (streamExtractor != null) {
                     streamExtractor.fetchPage();
-                    song = new Song(streamExtractor.getId(),
-                            streamExtractor.getUrl(),
-                            streamExtractor.getAudioStreams(),
-                            Source.SOUNDCLOUD, streamExtractor.getName(), streamExtractor.getThumbnails(), streamExtractor.getSubtitles(MediaFormat.VTT));
+                    Song song = new Song.Builder().id(streamExtractor.getId())
+                            .url(streamExtractor.getUrl())
+                            .audioLink(streamExtractor.getAudioStreams())
+                            .subtitlesStreams(streamExtractor.getSubtitles(MediaFormat.VTT))
+                            .title(streamExtractor.getName())
+                            .images(streamExtractor.getThumbnails())
+                            .source(Source.YOUTUBE)
+                            .build();
+
+
                     Log.d(tag, "lấy thành công bài hát từ soundcloud có url :" + url);
 
                     return song;

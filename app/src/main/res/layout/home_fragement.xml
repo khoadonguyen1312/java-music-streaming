@@ -88,27 +88,39 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
-                android:padding="29dp"
-                android:paddingLeft="29dp"
-                android:gravity="start"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Được cung cấp bởi :"></TextView>
+                    android:gravity="start"
+                    android:padding="29dp"
+                    android:paddingLeft="29dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Được cung cấp bởi :"></TextView>
 
 
-              <TextView
-                  android:layout_marginLeft="6dp"
-                  android:textColor="@android:color/holo_orange_dark"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="SoundCloud"
-                  ></TextView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:text="SoundCloud"
+                        android:textColor="@android:color/holo_orange_dark"></TextView>
+                </LinearLayout>
+
+                <Button
+
+                    android:id="@+id/btn"
+                    android:layout_width="123dp"
+                    android:layout_height="48dp"
+                    android:text="test"></Button>
             </LinearLayout>
-
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
