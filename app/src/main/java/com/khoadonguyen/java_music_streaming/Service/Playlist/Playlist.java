@@ -19,7 +19,7 @@ public class Playlist extends ArrayList<Song> {
         Log.d(tag, "clear playlist thành công");
     }
 
-    void next() {
+  public   void next() {
 
         if (index < this.size()) {
             index++;
@@ -27,7 +27,7 @@ public class Playlist extends ArrayList<Song> {
         }
     }
 
-    void back() {
+   public void back() {
 
         if (index > 0 && index < this.size()) {
             index--;
@@ -35,11 +35,13 @@ public class Playlist extends ArrayList<Song> {
         }
     }
 
-    Song gCurrentSong() {
+  public   Song gCurrentSong() {
         Song song = this.get(index);
         Log.d(tag, "playlist trả về bài hát có title :" + song.getTitle());
         return song;
     }
-
+    public int gIndex(){
+        return index;
+    }
 
 }
