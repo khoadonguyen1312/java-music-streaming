@@ -1,8 +1,6 @@
 package com.khoadonguyen.java_music_streaming;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +10,6 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.khoadonguyen.java_music_streaming.Service.impl.DynamicSoundCloudExtractor;
-import com.khoadonguyen.java_music_streaming.Service.impl.DynamicYoutubeExtractor;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.FolderFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.HomeFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.SearchFragment;
