@@ -1,19 +1,15 @@
-package com.khoadonguyen.java_music_streaming.Service.impl;
+package com.khoadonguyen.java_music_streaming.Service.extractor.impl;
 
-import android.location.Location;
 import android.util.Log;
 
 import com.khoadonguyen.java_music_streaming.Model.Song;
-import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.Service.DynamicDownloader;
-import com.khoadonguyen.java_music_streaming.Service.Extractor;
+import com.khoadonguyen.java_music_streaming.Service.extractor.Extractor;
 
 import org.schabi.newpipe.extractor.InfoItem;
-import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
@@ -56,21 +52,31 @@ public class DynamicYoutubeExtractor implements Extractor {
     }
 
     @Override
-    public CompletableFuture<List<Song>> search(String query, Location location) {
+    public CompletableFuture<List<Song>> search(String query) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                List<Song> songs;
+                List<Song> songs = new ArrayList<>();
                 YoutubeService youtubeService = initService();
 
                 SearchExtractor searchExtractor = youtubeService.getSearchExtractor(query);
-
+                Log.d(tag, "lay thanh cong search extractor");
                 if (searchExtractor != null) {
+                    Log.d(tag, "lấy thành công search cho query :" + query);
                     searchExtractor.fetchPage();
                     List<InfoItem> infoItems = searchExtractor.getInitialPage().getItems();
                     for (var infoitem : infoItems) {
+                        Song song = new Song.Builder().url(infoitem.getUrl())
+                                .title(infoitem.getName())
+                                .images(infoitem.getThumbnails())
+                                .build();
 
-
+                        songs.add(song);
                     }
+                    Log.d(tag, "láy thành công danh sách video cho search với query :" + query);
+
+                    return songs;
+
+
                 }
             } catch (RuntimeException e) {
                 throw new RuntimeException(e);

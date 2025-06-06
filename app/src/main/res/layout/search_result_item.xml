@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_item_result"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/search_item_result_image"
+        android:layout_width="55dp"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/pikachu">
+
+    </ImageView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="start|center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/search_item_result_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:paddingLeft="12dp"
+       ></TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+         android:id="@+id/search_item_result_author"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="10dp"></TextView>
+    </LinearLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"></View>
+
+    <ImageButton
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/more_vert_24dp_e3e3e3_fill0_wght400_grad0_opsz24"></ImageButton>
+
+</LinearLayout>

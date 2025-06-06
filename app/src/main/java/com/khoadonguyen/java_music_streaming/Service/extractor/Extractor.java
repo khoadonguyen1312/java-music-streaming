@@ -1,13 +1,9 @@
-package com.khoadonguyen.java_music_streaming.Service;
-
-import android.location.Location;
+package com.khoadonguyen.java_music_streaming.Service.extractor;
 
 import com.khoadonguyen.java_music_streaming.Model.Song;
 
 import org.schabi.newpipe.extractor.StreamingService;
-import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -31,7 +27,7 @@ public interface Extractor {
      * @param location
      * @return
      */
-    public CompletableFuture<List<Song>> search(String query, Location location);
+    public CompletableFuture<List<Song>> search(String query);
 
     /**
      * get many song from list url

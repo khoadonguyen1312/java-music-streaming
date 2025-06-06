@@ -1,12 +1,11 @@
-package com.khoadonguyen.java_music_streaming.Service.impl;
+package com.khoadonguyen.java_music_streaming.Service.extractor.impl;
 
-import android.location.Location;
 import android.util.Log;
 
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.Service.DynamicDownloader;
-import com.khoadonguyen.java_music_streaming.Service.Extractor;
+import com.khoadonguyen.java_music_streaming.Service.extractor.Extractor;
 
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.NewPipe;
@@ -62,7 +61,7 @@ public class DynamicSoundCloudExtractor implements Extractor {
     }
 
     @Override
-    public CompletableFuture<List<Song>> search(String query, Location location) {
+    public CompletableFuture<List<Song>> search(String query) {
         return null;
     }
 

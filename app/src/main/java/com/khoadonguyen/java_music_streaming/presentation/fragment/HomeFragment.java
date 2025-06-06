@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.khoadonguyen.java_music_streaming.R;
-import com.khoadonguyen.java_music_streaming.Service.impl.DynamicYoutubeExtractor;
+import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
 
 public class HomeFragment extends Fragment {
     Button button;
@@ -22,7 +22,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DynamicYoutubeExtractor dynamicYoutubeExtractor =new DynamicYoutubeExtractor();
-                dynamicYoutubeExtractor.gsong("https://www.youtube.com/watch?v=MofjqAC2pVI&list=RDMofjqAC2pVI");
+                dynamicYoutubeExtractor.search("apt");
             }
         });
         super.onViewCreated(view, savedInstanceState);
