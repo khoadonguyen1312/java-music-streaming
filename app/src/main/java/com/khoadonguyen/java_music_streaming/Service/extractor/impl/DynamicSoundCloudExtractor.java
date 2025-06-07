@@ -66,7 +66,7 @@ public class DynamicSoundCloudExtractor implements Extractor {
     }
 
     @Override
-    public Song gsong(List<String> urls) {
+    public List<Song> gsong(List<String> urls) {
         return null;
     }
 
