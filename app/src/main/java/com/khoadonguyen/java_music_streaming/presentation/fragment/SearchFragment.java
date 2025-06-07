@@ -46,8 +46,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void handleSearchEvent() {
-        searchView.getEditText().setOnEditorActionListener((v, keyCode, event) ->
-        {
+        searchView.getEditText().setOnEditorActionListener((v, keyCode, event) -> {
 
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 Log.d(tag, "search");
@@ -67,16 +66,14 @@ public class SearchFragment extends Fragment {
             List<Song> results = new ArrayList<>();
             new DynamicYoutubeExtractor().search(query).thenAccept(songs -> {
 
-                loading = false;
-                Log.d(tag, "search thành công");
+                getActivity().runOnUiThread(() -> {
+                    Log.d(tag, "search thành công");
+                    Log.d(tag, "Số lượng kết quả: " + songs.size());
 
-                SearchResultAdapter searchResultAdapter = new SearchResultAdapter(getContext(), songs);
-
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-                recyclerView.setAdapter(searchResultAdapter);
-
-
+                    SearchResultAdapter searchResultAdapter = new SearchResultAdapter(getContext(), songs);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recyclerView.setAdapter(searchResultAdapter);
+                });
             });
 
         } catch (Exception e) {

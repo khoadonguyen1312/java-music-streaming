@@ -11,7 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.khoadonguyen.java_music_streaming.Model.Song;
+import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.R;
 
 import java.util.List;
@@ -38,6 +40,16 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         holder.label.setText(song.getTitle());
         holder.author.setText("ROSE");
+        Source source = song.getSource();
+
+        if (source == Source.SOUNDCLOUD) {
+            holder.source.setTextColor(0xffFF7601);
+        } else {
+            holder.source.setTextColor(0xffFF3F33);
+
+        }
+        holder.source.setText(source.toString());
+        Glide.with(context).load(song.getImages().getFirst().getUrl()).into(holder.thumb);
     }
 
     @Override
@@ -47,7 +59,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView thumb;
-        private TextView label, author;
+        private TextView label, author, source;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -56,7 +68,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             thumb = itemView.findViewById(R.id.search_item_result_image);
             label = itemView.findViewById(R.id.search_item_result_title);
             author = itemView.findViewById(R.id.search_item_result_author);
-
+            source = itemView.findViewById(R.id.search_item_result_source);
 
         }
     }

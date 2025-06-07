@@ -3,6 +3,7 @@ package com.khoadonguyen.java_music_streaming.Service.extractor.impl;
 import android.util.Log;
 
 import com.khoadonguyen.java_music_streaming.Model.Song;
+import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.Service.DynamicDownloader;
 import com.khoadonguyen.java_music_streaming.Service.extractor.Extractor;
 
@@ -68,6 +69,7 @@ public class DynamicYoutubeExtractor implements Extractor {
                         Song song = new Song.Builder().url(infoitem.getUrl())
                                 .title(infoitem.getName())
                                 .images(infoitem.getThumbnails())
+                                .source(Source.YOUTUBE)
                                 .build();
 
                         songs.add(song);
