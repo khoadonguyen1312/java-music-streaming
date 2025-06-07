@@ -92,10 +92,19 @@ public class DynamicYoutubeExtractor implements Extractor {
     }
 
     @Override
-    public Song gsong(List<String> urls) {
+    public List<Song> gsong(List<String> urls) {
 
+        try {
+
+
+
+
+         } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
+
 
     @Override
     public YoutubeService initService() {

@@ -35,7 +35,7 @@ public interface Extractor {
      * @param urls
      * @return
      */
-    public Song gsong(List<String> urls);
+    public List<Song> gsong(List<String> urls);
 
     /**
      * init service
