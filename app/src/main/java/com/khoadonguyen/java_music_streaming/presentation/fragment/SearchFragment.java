@@ -1,6 +1,11 @@
 package com.khoadonguyen.java_music_streaming.presentation.fragment;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,7 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.search.SearchView;
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
+import com.khoadonguyen.java_music_streaming.Service.AudioPlayer.impl.DynamicAudioPlayerImpl;
+import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicSoundCloudExtractor;
 import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
+import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.SearchResultAdapter;
 
 import java.util.ArrayList;
@@ -27,7 +35,13 @@ public class SearchFragment extends Fragment {
     private SearchView searchView;
     private boolean loading = false;
 
+
+    private DynamicAudioPlayerImpl dynamicAudioPlayer;
     private RecyclerView recyclerView;
+
+    private boolean audioPlayerIsBound = false;
+
+
 
     @Nullable
     @Override
@@ -42,6 +56,8 @@ public class SearchFragment extends Fragment {
         searchView = view.findViewById(R.id.search_view);
         recyclerView = view.findViewById(R.id.recyclerview_search_results);
         handleSearchEvent();
+
+
 
     }
 
@@ -64,7 +80,7 @@ public class SearchFragment extends Fragment {
 
             loading = true;
             List<Song> results = new ArrayList<>();
-            new DynamicYoutubeExtractor().search(query).thenAccept(songs -> {
+            new DynamicSoundCloudExtractor().search(query).thenAccept(songs -> {
 
                 getActivity().runOnUiThread(() -> {
                     Log.d(tag, "search thành công");
@@ -73,6 +89,11 @@ public class SearchFragment extends Fragment {
                     SearchResultAdapter searchResultAdapter = new SearchResultAdapter(getContext(), songs);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     recyclerView.setAdapter(searchResultAdapter);
+                    searchResultAdapter.setOnItemClickListener(song -> {
+                        Log.d(tag, "Mở bài hát có title :" + song.getTitle());
+
+                        AudioPlayerManager.getAudioService().start(song);
+                    });
                 });
             });
 
@@ -82,5 +103,7 @@ public class SearchFragment extends Fragment {
 
 
     }
+
+
 
 }

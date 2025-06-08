@@ -63,4 +63,16 @@ dependencies {
      */
     // https://mvnrepository.com/artifact/com.github.bumptech.glide/glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    /**
+     * Exoplayer
+     */
+    implementation("androidx.media3:media3-exoplayer:1.7.1")
+    implementation("androidx.media3:media3-session:1.7.1")
+    implementation("androidx.media3:media3-common:1.7.1")
+    implementation("androidx.media3:media3-exoplayer-hls:1.7.1")
+
+
+
+
 }

@@ -7,16 +7,19 @@ import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.Service.DynamicDownloader;
 import com.khoadonguyen.java_music_streaming.Service.extractor.Extractor;
 
+import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.services.soundcloud.SoundcloudService;
 
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -62,7 +65,36 @@ public class DynamicSoundCloudExtractor implements Extractor {
 
     @Override
     public CompletableFuture<List<Song>> search(String query) {
-        return null;
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                List<Song> songs = new ArrayList<>();
+                SoundcloudService soundcloudService = initService();
+                SearchExtractor searchExtractor = soundcloudService.getSearchExtractor(query);
+                if (searchExtractor != null) {
+                    searchExtractor.fetchPage();
+                    List<InfoItem> infoItems = searchExtractor.getInitialPage().getItems();
+                    for (var infoitem : infoItems) {
+                        songs.add(new Song.Builder()
+                                .title(infoitem.getName())
+                                .images(infoitem.getThumbnails())
+                                .url(infoitem.getUrl())
+                                .source(Source.SOUNDCLOUD)
+                                .build()
+                        );
+                    }
+                    return songs;
+                }
+
+            } catch (RuntimeException e) {
+                throw new RuntimeException(e);
+            } catch (ExtractionException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+
+        });
     }
 
     @Override

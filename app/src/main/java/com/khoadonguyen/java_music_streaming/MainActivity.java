@@ -1,6 +1,12 @@
 package com.khoadonguyen.java_music_streaming;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,16 +14,38 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.khoadonguyen.java_music_streaming.Service.AudioPlayer.impl.DynamicAudioPlayerImpl;
+import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.FolderFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.HomeFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.SearchFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.UserFragment;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String tag = "MainActivity";
     //    Button button;
     BottomNavigationView bottomNavigationView;
+    private DynamicAudioPlayerImpl audioService;
+    private boolean isBound = false;
+
+    private final ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            DynamicAudioPlayerImpl.LocalBinder binder = (DynamicAudioPlayerImpl.LocalBinder) service;
+            audioService = binder.getService();
+            AudioPlayerManager.setAudioService(audioService);
+            isBound = true;
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +57,18 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-            replaceFragment(new HomeFragment());
+        replaceFragment(new HomeFragment());
 
-            handleBottomNavs();
+        handleBottomNavs();
+        startService();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, DynamicAudioPlayerImpl.class);
+
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
     private void handleBottomNavs() {
@@ -65,4 +102,10 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.main_fragment, fragment)
                 .commit();
     }
+
+    private void startService() {
+        this.startService(new Intent(this, DynamicAudioPlayerImpl.class));
+        Log.d(tag, "khởi tạo thành công AudioPlayer cho toàn bộ ứng dụng");
+    }
+
 }

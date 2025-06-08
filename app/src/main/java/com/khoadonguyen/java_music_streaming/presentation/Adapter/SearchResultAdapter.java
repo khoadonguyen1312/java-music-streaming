@@ -22,6 +22,18 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     Context context;
     List<Song> songs;
 
+    /**
+     * click song handle
+     */
+    public interface OnItemClickListener {
+        void itemClick(Song song);
+    }
+
+    private OnItemClickListener listener;
+    public  void setOnItemClickListener(OnItemClickListener listener)
+    {
+        this.listener =listener;
+    }
     public SearchResultAdapter(Context context, List<Song> songs) {
         this.context = context;
         this.songs = songs;
@@ -49,7 +61,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         }
         holder.source.setText(source.toString());
-        Glide.with(context).load(song.getImages().getFirst().getUrl()).into(holder.thumb);
+        Glide.with(context).load(song.getImages().getLast().getUrl()).into(holder.thumb);
     }
 
     @Override
@@ -69,6 +81,14 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             label = itemView.findViewById(R.id.search_item_result_title);
             author = itemView.findViewById(R.id.search_item_result_author);
             source = itemView.findViewById(R.id.search_item_result_source);
+
+            itemView.setOnClickListener(v -> {
+                int postion = getPosition();
+                if (listener != null && postion != RecyclerView.NO_POSITION) {
+                    listener.itemClick(songs.get(postion));
+                }
+
+            });
 
         }
     }
