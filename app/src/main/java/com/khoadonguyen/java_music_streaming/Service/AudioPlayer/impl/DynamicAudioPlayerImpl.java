@@ -3,9 +3,7 @@ package com.khoadonguyen.java_music_streaming.Service.AudioPlayer.impl;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -16,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import androidx.annotation.OptIn;
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.MediaItem;
 
@@ -30,11 +29,13 @@ import androidx.media3.session.MediaStyleNotificationHelper;
 
 import com.khoadonguyen.java_music_streaming.Model.Song;
 
-import com.khoadonguyen.java_music_streaming.R;
 import com.khoadonguyen.java_music_streaming.Service.AudioPlayer.DynamicAudioPlayer;
 import com.khoadonguyen.java_music_streaming.Service.Playlist.Playlist;
+import com.khoadonguyen.java_music_streaming.Service.extractor.Extractor;
+import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
 import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicSoundCloudExtractor;
 import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
+import com.khoadonguyen.java_music_streaming.storage.SharePreferencesHelper;
 
 import java.time.Duration;
 
@@ -45,10 +46,18 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
     private MutableLiveData<Playlist> playlist = new MutableLiveData<>(new Playlist());
 
     private ExoPlayer audioPlayer;
-    private DynamicSoundCloudExtractor dynamicYoutubeExtractor;
+    private Extractor extractor;
     private MediaSession mediaSession;
 
     private final IBinder binder = new LocalBinder();
+
+    public LiveData<Playlist> getPlaylist() {
+        return playlist;
+    }
+
+    public Extractor getExtractor() {
+        return extractor;
+    }
 
     public class LocalBinder extends Binder {
         public DynamicAudioPlayerImpl getService() {
@@ -68,16 +77,20 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
     @Override
     public void start(Song song) {
         try {
+            Playlist current = playlist.getValue();
+            current.clear();
             Log.d(tag, "khởi tạo bài hát đầu tiên của trình phát");
-            Song firstSong = dynamicYoutubeExtractor.gsong(song.getUrl()).join();
+            Song firstSong = extractor.gsong(song.getUrl()).join();
             Log.d(tag, "lấy đuược first song title :" + firstSong.getTitle());
             if (playlist.getValue() == null) {
                 playlist.setValue(new Playlist());
             }
-            playlist.getValue().add(firstSong);
+            current.add(firstSong);
 
             Log.d(tag, "add first song to playlist");
+            playlist.setValue(current);
             playSong(firstSong);
+
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
@@ -99,8 +112,14 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
             mediaSession = new MediaSession.Builder(this, audioPlayer).setCallback(new MediaSession.Callback() {
             }).build();
         }
-        if (dynamicYoutubeExtractor == null) {
-            dynamicYoutubeExtractor = new DynamicSoundCloudExtractor();
+        if (extractor == null) {
+            int source_id = new SourceExtractor().gSource(this);
+            Log.d(tag, "source id được lấy ra là " + String.valueOf(source_id));
+            if (source_id == 0) {
+                extractor = new DynamicYoutubeExtractor();
+            } else {
+                extractor = new DynamicSoundCloudExtractor();
+            }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -170,6 +189,7 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
             throw new RuntimeException(e);
         }
     }
+
 
     @Nullable
     @Override

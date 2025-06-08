@@ -14,17 +14,60 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/navigation_bar"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="NotSibling"/>
+        tools:ignore="NotSibling" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
+    <LinearLayout
+        android:id="@+id/audio_bottomsheet"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/bottomsheet"
+        android:gravity="center_vertical|start"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/navigation_bar">
 
-            android:id="@+id/navigation_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:menu="@menu/bottom_nav_items" />
+        <ImageView
 
+            android:id="@+id/audio_bottomsheet_thumb"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+
+            ></ImageView>
+
+        <View
+            android:layout_width="12dp"
+            android:layout_height="0dp"></View>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/audio_bottomsheet_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="120dp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"></TextView>
+
+            <TextView
+                android:id="@+id/audio_bottomsheet_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"></TextView>
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+
+        android:id="@+id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_nav_items" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,14 +42,26 @@ public class SharePreferencesHelper {
             throw new RuntimeException(e);
         }
     }
-    public  static  void setInt(String key,Integer value ,Context context)
-    {
+
+    public static void setInt(String key, Integer value, Context context) {
         try {
             SharedPreferences sharedPreferences = initSharedPreferences(context);
 
             sharedPreferences.edit().putInt(key, value).apply();
             Log.d(logTag, "Save successfully key :" + key + "value :" + value);
 
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int getInt(String key, Context context) {
+        try {
+            SharedPreferences sharedPreferences = initSharedPreferences(context);
+
+            int value = sharedPreferences.getInt(key, 0);
+            Log.d(logTag, "get successfully key :" + key + "value :" + value);
+            return value;
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
