@@ -3,6 +3,7 @@ package com.khoadonguyen.java_music_streaming.Service.extractor.impl;
 import android.util.Log;
 
 import com.khoadonguyen.java_music_streaming.Model.Song;
+import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.Service.DynamicDownloader;
 import com.khoadonguyen.java_music_streaming.Service.extractor.Extractor;
 
@@ -35,7 +36,13 @@ public class DynamicYoutubeExtractor implements Extractor {
                 if (streamExtractor != null) {
                     streamExtractor.fetchPage();
                     Log.d(tag, "lấy thành công streamExtractor cho video có url :" + url);
-                    Song song = new Song.Builder().title(streamExtractor.getName()).build();
+                    Song song = new Song.Builder().title(streamExtractor.getName())
+                            .url(streamExtractor.getUrl())
+                            .images(streamExtractor.getThumbnails())
+                            .source(Source.YOUTUBE)
+                            .id(streamExtractor.getId())
+                            .audioLink(streamExtractor.getAudioStreams())
+                            .build();
 
                     Log.d(tag, "tra ve thanh cong song object voi ten :" + song.getTitle());
 
@@ -66,8 +73,10 @@ public class DynamicYoutubeExtractor implements Extractor {
                     List<InfoItem> infoItems = searchExtractor.getInitialPage().getItems();
                     for (var infoitem : infoItems) {
                         Song song = new Song.Builder().url(infoitem.getUrl())
+
                                 .title(infoitem.getName())
                                 .images(infoitem.getThumbnails())
+                                .source(Source.YOUTUBE)
                                 .build();
 
                         songs.add(song);
@@ -97,9 +106,7 @@ public class DynamicYoutubeExtractor implements Extractor {
         try {
 
 
-
-
-         } catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
         return null;
