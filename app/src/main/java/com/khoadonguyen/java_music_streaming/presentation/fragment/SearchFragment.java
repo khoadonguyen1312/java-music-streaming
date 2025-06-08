@@ -42,7 +42,6 @@ public class SearchFragment extends Fragment {
     private boolean audioPlayerIsBound = false;
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,7 +55,6 @@ public class SearchFragment extends Fragment {
         searchView = view.findViewById(R.id.search_view);
         recyclerView = view.findViewById(R.id.recyclerview_search_results);
         handleSearchEvent();
-
 
 
     }
@@ -80,7 +78,7 @@ public class SearchFragment extends Fragment {
 
             loading = true;
             List<Song> results = new ArrayList<>();
-            new DynamicSoundCloudExtractor().search(query).thenAccept(songs -> {
+            AudioPlayerManager.getAudioService().getExtractor().search(query).thenAccept(songs -> {
 
                 getActivity().runOnUiThread(() -> {
                     Log.d(tag, "search thành công");
@@ -103,7 +101,6 @@ public class SearchFragment extends Fragment {
 
 
     }
-
 
 
 }

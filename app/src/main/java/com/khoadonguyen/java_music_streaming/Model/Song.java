@@ -18,7 +18,13 @@ public class Song {
 
     private List<Image> images;
     private List<SubtitlesStream> subtitlesStreams;
-
+//    public AudioStream gHighestAudioStream(){
+//        return audioLink.stream().map(audioStream -> {
+//            audioStream.getb
+//
+//        });
+//
+//    }
     public Song(Builder builder) {
 
         this.subtitlesStreams = builder.subtitlesStreams;

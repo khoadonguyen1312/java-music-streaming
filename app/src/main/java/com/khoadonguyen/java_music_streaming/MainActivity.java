@@ -7,6 +7,10 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +18,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.Service.AudioPlayer.impl.DynamicAudioPlayerImpl;
+import com.khoadonguyen.java_music_streaming.Service.Playlist.Playlist;
 import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.FolderFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.HomeFragment;
@@ -38,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             audioService = binder.getService();
             AudioPlayerManager.setAudioService(audioService);
             isBound = true;
-
+            listenPlaylist();
         }
 
         @Override
@@ -106,6 +114,36 @@ public class MainActivity extends AppCompatActivity {
     private void startService() {
         this.startService(new Intent(this, DynamicAudioPlayerImpl.class));
         Log.d(tag, "khởi tạo thành công AudioPlayer cho toàn bộ ứng dụng");
+    }
+
+
+    private void listenPlaylist() {
+        LinearLayout linearLayout = findViewById(R.id.audio_bottomsheet);
+        ImageView thumb = findViewById(R.id.audio_bottomsheet_thumb);
+        TextView title = findViewById(R.id.audio_bottomsheet_title);
+        TextView author = findViewById(R.id.audio_bottomsheet_author);
+        AudioPlayerManager.getAudioService().getPlaylist().observe(this,
+                new Observer<Playlist>() {
+                    @Override
+                    public void onChanged(Playlist songs) {
+                        if (!songs.isEmpty()) {
+                            Song song = songs.get(songs.gIndex());
+                            Log.d(tag, "có bài hát trong playlist");
+                            linearLayout.setVisibility(View.VISIBLE);
+                            title.setText(song.getTitle());
+                            title.setSelected(true);
+                            author.setText("ROSE");
+                            Glide.with(getApplicationContext()).load(song.getImages().getFirst().getUrl()).into(thumb);
+                            thumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        } else {
+                            linearLayout.setVisibility(View.GONE);
+                        }
+                    }
+
+                }
+        );
+
+
     }
 
 }
