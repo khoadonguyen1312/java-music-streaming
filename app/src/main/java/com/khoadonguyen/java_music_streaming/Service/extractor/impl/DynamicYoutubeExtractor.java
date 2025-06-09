@@ -14,12 +14,17 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
+import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class DynamicYoutubeExtractor implements Extractor {
     final static String tag = "DynamicYoutubeExtractor";
@@ -36,13 +41,7 @@ public class DynamicYoutubeExtractor implements Extractor {
                 if (streamExtractor != null) {
                     streamExtractor.fetchPage();
                     Log.d(tag, "lấy thành công streamExtractor cho video có url :" + url);
-                    Song song = new Song.Builder().title(streamExtractor.getName())
-                            .url(streamExtractor.getUrl())
-                            .images(streamExtractor.getThumbnails())
-                            .source(Source.YOUTUBE)
-                            .id(streamExtractor.getId())
-                            .audioLink(streamExtractor.getAudioStreams())
-                            .build();
+                    Song song = new Song.Builder().title(streamExtractor.getName()).url(streamExtractor.getUrl()).images(streamExtractor.getThumbnails()).source(Source.YOUTUBE).id(streamExtractor.getId()).audioLink(streamExtractor.getAudioStreams()).build();
 
                     Log.d(tag, "tra ve thanh cong song object voi ten :" + song.getTitle());
 
@@ -74,10 +73,7 @@ public class DynamicYoutubeExtractor implements Extractor {
                     for (var infoitem : infoItems) {
                         Song song = new Song.Builder().url(infoitem.getUrl())
 
-                                .title(infoitem.getName())
-                                .images(infoitem.getThumbnails())
-                                .source(Source.YOUTUBE)
-                                .build();
+                                .title(infoitem.getName()).images(infoitem.getThumbnails()).source(Source.YOUTUBE).build();
 
                         songs.add(song);
                     }
@@ -126,5 +122,46 @@ public class DynamicYoutubeExtractor implements Extractor {
         } catch (ExtractionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public CompletableFuture<List<Song>> recomandSong(Song song) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                List<CompletableFuture<Song>> completableFutureList = new ArrayList<>();
+
+
+                StreamInfo streamInfo = StreamInfo.getInfo(song.getUrl());
+                if (streamInfo != null) {
+
+                    List<InfoItem> infoItems = streamInfo.getRelatedItems();
+                    for (var inforitem : infoItems) {
+                        if (!inforitem.getUrl().contains("list")) {
+                            completableFutureList.add(gsong(inforitem.getUrl()));
+                        }
+                    }
+                    CompletableFuture<Void> completableFuture = CompletableFuture.allOf(completableFutureList.toArray(new CompletableFuture[0]));
+                    List<Song> songs = completableFuture.thenApply(v -> completableFutureList.stream().map(CompletableFuture::join).collect(Collectors.toList())
+
+                    ).get();
+
+                    return songs;
+
+                }
+
+            } catch (RuntimeException e) {
+                throw new RuntimeException(e);
+            } catch (ExtractionException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            return null;
+        });
     }
 }

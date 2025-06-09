@@ -39,6 +39,11 @@ import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutu
 import com.khoadonguyen.java_music_streaming.storage.SharePreferencesHelper;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class DynamicAudioPlayerImpl extends MediaSessionService implements DynamicAudioPlayer {
@@ -49,6 +54,8 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
     private MutableLiveData<Boolean> playing = new MutableLiveData<>();
     private ExoPlayer audioPlayer;
     private Extractor extractor;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private MediaSession mediaSession;
 
     private final IBinder binder = new LocalBinder();
@@ -106,17 +113,51 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
             Log.d(tag, "add first song to playlist");
             playlist.setValue(current);
             playSong(firstSong);
-
+            addSongsToplaylist(firstSong);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    @Override
-    public void next() {
+    private void addSongsToplaylist(Song song) {
+        executorService.execute(() -> {
+            List<Song> songs = extractor.recomandSong(song).join();
+
+            Playlist playlistCache = playlist.getValue();
+            if (playlistCache != null) {
+                playlistCache.addAll(songs);
+                playlist.postValue(playlistCache);
+                Log.d(tag, "độ dài playlist là " + playlist.getValue().size());
+            }
+        });
 
     }
+
+    @Override
+    public void next() {
+        Playlist current = playlist.getValue();
+        if (current != null && current.listIterator().hasNext()) {
+            current.next();
+            playlist.setValue(current);
+            playSong(null);
+        } else {
+            Log.d(tag, "Không có bài kế tiếp");
+        }
+    }
+
+    @Override
+    public void back() {
+        Playlist current = playlist.getValue();
+        if (current != null && current.listIterator().hasPrevious()) {
+            current.back();
+            playlist.setValue(current);
+            playSong(null);
+        } else {
+            Log.d(tag, "Không có bài trước đó");
+        }
+    }
+
 
     @Override
     public void onCreate() {
@@ -129,7 +170,7 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
             }).build();
         }
         if (extractor == null) {
-            int source_id = new SourceExtractor().gSource(this);
+            int source_id = SourceExtractor.getInstance().gSource(this);
             Log.d(tag, "source id được lấy ra là " + String.valueOf(source_id));
             if (source_id == 0) {
                 extractor = new DynamicYoutubeExtractor();
@@ -149,10 +190,6 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
         return playing;
     }
 
-    @Override
-    public void back() {
-
-    }
 
     @Override
     public void pause() {
@@ -194,10 +231,10 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
     @Override
     public void playSong(Song song) {
         try {
-            Log.d(tag, String.valueOf(playlist.getValue().size()));
-            Log.d(tag, playlist.getValue().getFirst().getUrl().toString());
+
             song = playlist.getValue().gCurrentSong();
-            MediaItem mediaItem = new MediaItem.Builder().setUri(song.getAudioLink().getFirst().getUrl()).setMediaMetadata(new MediaMetadata.Builder().setTitle(song.getTitle()).setArtworkUri(Uri.parse(song.getImages().getFirst().getUrl())).build()).build();
+            Log.d(tag, song.getAudioLink().get(0).getUrl());
+            MediaItem mediaItem = new MediaItem.Builder().setUri(song.getAudioLink().get(0).getUrl()).setMediaMetadata(new MediaMetadata.Builder().setTitle(song.getTitle()).setArtworkUri(Uri.parse(song.getImages().get(0).getUrl())).build()).build();
 
 
             audioPlayer.setMediaItem(mediaItem);
@@ -208,8 +245,7 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
             audioPlayer.play();
             Log.d(tag, "audioplayer play");
             mediaSession.setPlayer(audioPlayer);
-            // Sửa notification của bạn - PHẢI có setSmallIcon()
-            Notification noti = new NotificationCompat.Builder(this, "audio").setContentTitle("Track title").setContentText("Artist - Album").setSmallIcon(android.R.drawable.ic_media_play) // ← QUAN TRỌNG: Thêm dòng này!
+            Notification noti = new NotificationCompat.Builder(this, "audio").setContentTitle("Track title").setContentText("Artist - Album").setSmallIcon(android.R.drawable.ic_media_play)
                     .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession)).setOngoing(true) // Không cho phép swipe để xóa
                     .setPriority(NotificationCompat.PRIORITY_LOW).build();
 

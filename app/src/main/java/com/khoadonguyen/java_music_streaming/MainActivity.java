@@ -17,6 +17,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -59,18 +60,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+
+
+        View decorView = getWindow().getDecorView();
+
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        decorView.setSystemUiVisibility(uiOptions);
+
         setContentView(R.layout.activity_main);
+
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        replaceFragment(new HomeFragment());
 
+        // 5. Logic khác
+        replaceFragment(new HomeFragment());
         handleBottomNavs();
         startService();
     }
+
 
     @Override
     protected void onStart() {
@@ -138,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                             title.setText(song.getTitle());
                             title.setSelected(true);
                             author.setText("ROSE");
-                            Glide.with(getApplicationContext()).load(song.getImages().getFirst().getUrl()).into(thumb);
+                            Glide.with(getApplicationContext()).load(song.getImages().get(0).getUrl()).into(thumb);
                             thumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                         } else {
                             linearLayout.setVisibility(View.GONE);

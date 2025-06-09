@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.khoadonguyen.java_music_streaming"
-        minSdk = 35
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -71,8 +71,6 @@ dependencies {
     implementation("androidx.media3:media3-session:1.7.1")
     implementation("androidx.media3:media3-common:1.7.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.7.1")
-
-
 
 
 }

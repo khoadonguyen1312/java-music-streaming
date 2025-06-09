@@ -107,6 +107,7 @@
 
 
                     <TextView
+                        android:id="@+id/source_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="6dp"
@@ -122,6 +123,16 @@
                     ></Button>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
+
+        <FrameLayout
+            android:id="@+id/home_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+            <!-- Bottom sheet contents. -->
+
+        </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

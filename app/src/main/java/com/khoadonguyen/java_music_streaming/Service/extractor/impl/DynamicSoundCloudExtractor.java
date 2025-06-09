@@ -20,6 +20,7 @@ import org.schabi.newpipe.extractor.stream.StreamExtractor;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -119,5 +120,10 @@ public class DynamicSoundCloudExtractor implements Extractor {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public CompletableFuture<List<Song>> recomandSong(Song song) {
+        return null;
     }
 }
