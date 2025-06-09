@@ -20,6 +20,7 @@ import androidx.media3.common.MediaItem;
 
 
 import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 
@@ -45,11 +46,16 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
 
     private MutableLiveData<Playlist> playlist = new MutableLiveData<>(new Playlist());
 
+    private MutableLiveData<Boolean> playing = new MutableLiveData<>();
     private ExoPlayer audioPlayer;
     private Extractor extractor;
     private MediaSession mediaSession;
 
     private final IBinder binder = new LocalBinder();
+
+    public ExoPlayer getAudioPlayer() {
+        return audioPlayer;
+    }
 
     public LiveData<Playlist> getPlaylist() {
         return playlist;
@@ -63,6 +69,16 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
         public DynamicAudioPlayerImpl getService() {
             return DynamicAudioPlayerImpl.this;
         }
+    }
+
+    public void observePlayer() {
+        audioPlayer.addListener(new Player.Listener() {
+            @Override
+            public void onIsPlayingChanged(boolean isPlaying) {
+                Player.Listener.super.onIsPlayingChanged(isPlaying);
+                playing.setValue(isPlaying);
+            }
+        });
     }
 
     @Nullable
@@ -122,15 +138,15 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    "audio",
-                    "Audio Playback",
-                    NotificationManager.IMPORTANCE_LOW
-            );
+            NotificationChannel channel = new NotificationChannel("audio", "Audio Playback", NotificationManager.IMPORTANCE_LOW);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
 
+    }
+
+    public MutableLiveData<Boolean> getPlaying() {
+        return playing;
     }
 
     @Override
@@ -140,7 +156,33 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
 
     @Override
     public void pause() {
+        try {
+            audioPlayer.pause();
+            playing.setValue(false);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    private void play() {
+        try {
+            audioPlayer.play();
+            playing.setValue(true);
+        } catch (RuntimeException exception) {
+
+        }
+    }
+
+    public void togglePausePlay() {
+        try {
+            if (audioPlayer.isPlaying()) {
+                pause();
+            } else {
+                play();
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -155,15 +197,7 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
             Log.d(tag, String.valueOf(playlist.getValue().size()));
             Log.d(tag, playlist.getValue().getFirst().getUrl().toString());
             song = playlist.getValue().gCurrentSong();
-            MediaItem mediaItem = new MediaItem.Builder()
-                    .setUri(song.getAudioLink().getFirst().getUrl())
-                    .setMediaMetadata(
-                            new MediaMetadata.Builder()
-                                    .setTitle(song.getTitle())
-                                    .setArtworkUri(Uri.parse(song.getImages().getFirst().getUrl()))
-                                    .build()
-                    )
-                    .build();
+            MediaItem mediaItem = new MediaItem.Builder().setUri(song.getAudioLink().getFirst().getUrl()).setMediaMetadata(new MediaMetadata.Builder().setTitle(song.getTitle()).setArtworkUri(Uri.parse(song.getImages().getFirst().getUrl())).build()).build();
 
 
             audioPlayer.setMediaItem(mediaItem);
@@ -175,14 +209,9 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
             Log.d(tag, "audioplayer play");
             mediaSession.setPlayer(audioPlayer);
             // Sửa notification của bạn - PHẢI có setSmallIcon()
-            Notification noti = new NotificationCompat.Builder(this, "audio")
-                    .setContentTitle("Track title")
-                    .setContentText("Artist - Album")
-                    .setSmallIcon(android.R.drawable.ic_media_play) // ← QUAN TRỌNG: Thêm dòng này!
-                    .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
-                    .setOngoing(true) // Không cho phép swipe để xóa
-                    .setPriority(NotificationCompat.PRIORITY_LOW)
-                    .build();
+            Notification noti = new NotificationCompat.Builder(this, "audio").setContentTitle("Track title").setContentText("Artist - Album").setSmallIcon(android.R.drawable.ic_media_play) // ← QUAN TRỌNG: Thêm dòng này!
+                    .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession)).setOngoing(true) // Không cho phép swipe để xóa
+                    .setPriority(NotificationCompat.PRIORITY_LOW).build();
 
             startForeground(1, noti);
         } catch (RuntimeException e) {
