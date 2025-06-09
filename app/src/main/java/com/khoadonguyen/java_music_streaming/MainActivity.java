@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -122,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
         ImageView thumb = findViewById(R.id.audio_bottomsheet_thumb);
         TextView title = findViewById(R.id.audio_bottomsheet_title);
         TextView author = findViewById(R.id.audio_bottomsheet_author);
+        int pause_icon = R.drawable.pause_24dp_e3e3e3_fill0_wght400_grad0_opsz24;
+        int play_icon = R.drawable.play_arrow_24dp_e3e3e3_fill0_wght400_grad0_opsz24;
+        ImageButton play_pause = findViewById(R.id.audio_bottomsheet_pause_play);
+        AudioPlayerManager.getAudioService().observePlayer();
         AudioPlayerManager.getAudioService().getPlaylist().observe(this,
                 new Observer<Playlist>() {
                     @Override
@@ -143,7 +148,24 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        AudioPlayerManager.getAudioService().getPlaying().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    play_pause.setImageResource(pause_icon);
+                } else {
+                    play_pause.setImageResource(play_icon);
+                }
+            }
 
+        });
+
+        play_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AudioPlayerManager.getAudioService().togglePausePlay();
+            }
+        });
     }
 
 }
