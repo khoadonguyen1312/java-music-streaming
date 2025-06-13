@@ -19,6 +19,8 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,12 +38,14 @@ public class DynamicYoutubeExtractor implements Extractor {
 
                 YoutubeService youtubeService = initService();
 
-                StreamExtractor streamExtractor = youtubeService.getStreamExtractor(url);
+                StreamInfo streamInfo = StreamInfo.getInfo(url);
 
-                if (streamExtractor != null) {
-                    streamExtractor.fetchPage();
+                if (streamInfo != null) {
+
                     Log.d(tag, "lấy thành công streamExtractor cho video có url :" + url);
-                    Song song = new Song.Builder().title(streamExtractor.getName()).url(streamExtractor.getUrl()).images(streamExtractor.getThumbnails()).source(Source.YOUTUBE).id(streamExtractor.getId()).audioLink(streamExtractor.getAudioStreams()).build();
+                    Song song = new Song.Builder()
+                            .duration(Duration.ofSeconds(streamInfo.getDuration()))
+                            .title(streamInfo.getName()).url(streamInfo.getUrl()).images(streamInfo.getThumbnails()).source(Source.YOUTUBE).id(streamInfo.getId()).audioLink(streamInfo.getAudioStreams()).build();
 
                     Log.d(tag, "tra ve thanh cong song object voi ten :" + song.getTitle());
 
@@ -144,10 +148,19 @@ public class DynamicYoutubeExtractor implements Extractor {
                     List<Song> songs = completableFuture.thenApply(v -> completableFutureList.stream().map(CompletableFuture::join).collect(Collectors.toList())
 
                     ).get();
-
-                    return songs;
+                    List<Song> results = songs.stream()
+                            .filter(s -> s.getDuration().toMinutes() < 60)
+                            .collect(Collectors.toList());
+                    for (var result : results) {
+                        Log.d(tag, result.getTitle());
+                    }
+                    return results;
 
                 }
+
+
+
+
 
             } catch (RuntimeException e) {
                 throw new RuntimeException(e);

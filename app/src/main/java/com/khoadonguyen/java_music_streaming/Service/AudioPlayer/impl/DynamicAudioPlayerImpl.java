@@ -96,6 +96,9 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
         return binder;
     }
 
+    public List<Song> gplaylist() {
+        return this.playlist.getValue();
+    }
 
     @Override
     public void start(Song song) {

@@ -71,12 +71,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-                <ImageView
+                <ImageButton
+                    android:id="@+id/home_fragment_playlist_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
                     android:src="@drawable/bar_chart_24dp_e3e3e3_fill0_wght400_grad0_opsz24">
 
-                </ImageView>
+                </ImageButton>
             </LinearLayout>
 
         </com.google.android.material.appbar.AppBarLayout>

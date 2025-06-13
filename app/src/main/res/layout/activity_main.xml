@@ -30,6 +30,7 @@
             android:id="@+id/audio_bottomsheet_thumb"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:scaleType="fitXY"
 
             ></ImageView>
 

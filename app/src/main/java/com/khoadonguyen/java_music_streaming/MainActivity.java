@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -29,6 +30,8 @@ import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.Service.AudioPlayer.impl.DynamicAudioPlayerImpl;
 import com.khoadonguyen.java_music_streaming.Service.Playlist.Playlist;
 import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
+import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
+import com.khoadonguyen.java_music_streaming.presentation.fragment.CurrentSongFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.FolderFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.HomeFragment;
 import com.khoadonguyen.java_music_streaming.presentation.fragment.SearchFragment;
@@ -36,10 +39,13 @@ import com.khoadonguyen.java_music_streaming.presentation.fragment.UserFragment;
 
 public class MainActivity extends AppCompatActivity {
     private static final String tag = "MainActivity";
+
+
     //    Button button;
     BottomNavigationView bottomNavigationView;
     private DynamicAudioPlayerImpl audioService;
     private boolean isBound = false;
+    private FragmentActivity fragmentActivity = this;
 
     private final ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -60,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
 
 
         View decorView = getWindow().getDecorView();
@@ -135,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView thumb = findViewById(R.id.audio_bottomsheet_thumb);
         TextView title = findViewById(R.id.audio_bottomsheet_title);
         TextView author = findViewById(R.id.audio_bottomsheet_author);
+        LinearLayout audioBottomSheet = findViewById(R.id.audio_bottomsheet);
         int pause_icon = R.drawable.pause_24dp_e3e3e3_fill0_wght400_grad0_opsz24;
         int play_icon = R.drawable.play_arrow_24dp_e3e3e3_fill0_wght400_grad0_opsz24;
         ImageButton play_pause = findViewById(R.id.audio_bottomsheet_pause_play);
@@ -176,6 +184,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AudioPlayerManager.getAudioService().togglePausePlay();
+            }
+        });
+
+        audioBottomSheet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChangeScreen.changeScreen(fragmentActivity, new CurrentSongFragment());
             }
         });
     }

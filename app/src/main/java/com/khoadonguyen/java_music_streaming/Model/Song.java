@@ -5,9 +5,18 @@ import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 
+import java.time.Duration;
 import java.util.List;
 
 public class Song {
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
     private String id;
 
     private String url;
@@ -18,7 +27,11 @@ public class Song {
 
     private List<Image> images;
     private List<SubtitlesStream> subtitlesStreams;
-//    public AudioStream gHighestAudioStream(){
+
+    private Duration duration;
+
+
+    //    public AudioStream gHighestAudioStream(){
 //        return audioLink.stream().map(audioStream -> {
 //            audioStream.getb
 //
@@ -34,11 +47,20 @@ public class Song {
         this.source = builder.getSource();
         this.title = builder.getTitle();
         this.images = builder.getImages();
+        this.duration = builder.getDuration();
     }
 
     public static class Builder {
-        private String id;
+        public Duration getDuration() {
+            return duration;
+        }
 
+        public void setDuration(Duration duration) {
+            this.duration = duration;
+        }
+
+        private String id;
+        private Duration duration;
         private String url;
 
         private List<AudioStream> audioLink;
@@ -61,6 +83,11 @@ public class Song {
             this.url = url;
             return this;
 
+        }
+
+        public Builder duration(Duration duration) {
+            this.duration = duration;
+            return this;
         }
 
         public Builder audioLink(List<AudioStream> audioLink) {

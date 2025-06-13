@@ -72,5 +72,11 @@ dependencies {
     implementation("androidx.media3:media3-common:1.7.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.7.1")
 
+    /**
+     * loading package
+     */
+
+    implementation ("com.github.ybq:Android-SpinKit:1.4.0")
+
 
 }

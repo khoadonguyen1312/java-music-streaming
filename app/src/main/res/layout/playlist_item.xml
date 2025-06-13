@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?><!-- res/layout/item_song.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/playlist_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="2dp">
+
+
+    <ImageView
+        android:id="@+id/playlist_item_thumb"
+        android:layout_width="56dp"
+
+        android:layout_height="45dp"
+        android:contentDescription="Cover Image"
+
+        android:scaleType="centerCrop" />
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="6dp"
+
+        android:paddingEnd="6dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|center_horizontal">
+
+            <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/playlist_item_playing_icon"
+                style="@style/SpinKitView.Wave"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:SpinKit_Color="@android:color/white" />
+
+            <TextView
+                android:id="@+id/playlist_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Tên bài hát"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/playlist_item_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Tên tác giả"
+            android:textColor="#888888"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/playlist_item_more"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="More Options"
+        android:padding="2dp"
+        android:src="@drawable/more_vert_24dp_e3e3e3_fill0_wght400_grad0_opsz24" />
+</LinearLayout>
