@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.khoadonguyen.java_music_streaming" />
+                  <option name="mobileSdkAppId" value="1:622494811922:android:806ec780acf12f9defd5cb" />
+                  <option name="projectId" value="javamusicstreaming" />
+                  <option name="projectNumber" value="622494811922" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

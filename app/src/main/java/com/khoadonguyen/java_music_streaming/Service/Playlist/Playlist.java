@@ -21,7 +21,7 @@ public class Playlist extends ArrayList<Song> {
 
   public   void next() {
 
-        if (index < this.size()) {
+        if (index < this.size()-1) {
             index++;
             Log.d(tag, "current index playlist :" + index);
         }

@@ -6,4 +6,9 @@
     <color name="background_color">#121111</color>
     <color name="gray">#DBDBDB</color>
     <color name="bottomsheet">#212121</color>
+    <color name="black_glass">#99000000
+    </color>
+
+    <color name="test">#2596be</color>
+
 </resources>

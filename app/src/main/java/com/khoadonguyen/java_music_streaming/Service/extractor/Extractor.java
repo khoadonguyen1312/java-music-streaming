@@ -42,4 +42,7 @@ public interface Extractor {
      */
 
     public StreamingService initService();
+
+
+    public CompletableFuture<List<Song>> recomandSong(Song song);
 }

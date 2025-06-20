@@ -71,12 +71,17 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-                <ImageView
+                <ImageButton
+                    android:id="@+id/home_fragment_playlist_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+
                     android:src="@drawable/bar_chart_24dp_e3e3e3_fill0_wght400_grad0_opsz24">
 
-                </ImageView>
+                </ImageButton>
             </LinearLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -97,7 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:padding="29dp"
+                    android:padding="12dp"
                     android:paddingLeft="29dp">
 
                     <TextView
@@ -107,6 +112,7 @@
 
 
                     <TextView
+                        android:id="@+id/source_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="6dp"
@@ -114,14 +120,43 @@
                         android:textColor="@android:color/holo_orange_dark"></TextView>
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/btn"
-                    android:layout_width="120dp"
-                    android:layout_height="24dp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="24dp"
+                    android:text="Recomand song"
+                    android:textSize="18sp">
 
-                    ></Button>
+
+                </TextView>
+
+                <GridView
+                    android:id="@+id/home_fragment_recomand_girdview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+
+                    android:clipToPadding="false"
+                    android:horizontalSpacing="24dp"
+                    android:numColumns="2"
+                    android:padding="8dp"
+                    android:scrollbars="none"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="12dp" />
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
+
+        <FrameLayout
+            android:id="@+id/home_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+            <!-- Bottom sheet contents. -->
+
+        </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

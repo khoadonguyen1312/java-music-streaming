@@ -5,11 +5,20 @@ import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 
+import java.time.Duration;
 import java.util.List;
 
 public class Song {
-    private String id;
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    private String id;
+    private String author;
     private String url;
 
     private List<AudioStream> audioLink;
@@ -18,15 +27,24 @@ public class Song {
 
     private List<Image> images;
     private List<SubtitlesStream> subtitlesStreams;
-//    public AudioStream gHighestAudioStream(){
+
+    private Duration duration;
+
+
+    //    public AudioStream gHighestAudioStream(){
 //        return audioLink.stream().map(audioStream -> {
 //            audioStream.getb
 //
 //        });
 //
 //    }
-    public Song(Builder builder) {
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public Song(Builder builder) {
+        this.author = builder.getAuthor();
         this.subtitlesStreams = builder.subtitlesStreams;
         this.id = builder.getId();
         this.url = builder.getUrl();
@@ -34,11 +52,25 @@ public class Song {
         this.source = builder.getSource();
         this.title = builder.getTitle();
         this.images = builder.getImages();
+        this.duration = builder.getDuration();
     }
 
     public static class Builder {
-        private String id;
+        public Duration getDuration() {
+            return duration;
+        }
 
+        public void setDuration(Duration duration) {
+            this.duration = duration;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        private String author;
+        private String id;
+        private Duration duration;
         private String url;
 
         private List<AudioStream> audioLink;
@@ -57,10 +89,20 @@ public class Song {
             return this;
         }
 
+        public Builder author(String author) {
+            this.author = author;
+            return this;
+        }
+
         public Builder url(String url) {
             this.url = url;
             return this;
 
+        }
+
+        public Builder duration(Duration duration) {
+            this.duration = duration;
+            return this;
         }
 
         public Builder audioLink(List<AudioStream> audioLink) {
@@ -145,4 +187,25 @@ public class Song {
     public List<SubtitlesStream> getSubtitlesStreams() {
         return subtitlesStreams;
     }
+
+    public String gHighImage() {
+        if (images == null || images.isEmpty()) return null;
+
+        String maxImageString = null;
+        int maxArea = 0;
+
+        for (var image : images) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+            int area = width * height;
+
+            if (area > maxArea) {
+                maxArea = area;
+                maxImageString = image.getUrl();
+            }
+        }
+
+        return maxImageString;
+    }
+
 }

@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,17 +63,16 @@ public class SearchFragment extends Fragment {
     }
 
     private void handleSearchEvent() {
-        searchView.getEditText().setOnEditorActionListener((v, keyCode, event) -> {
-
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+        searchView.getEditText().setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 Log.d(tag, "search");
                 String query = searchView.getEditText().getText().toString();
                 search(query);
                 return true;
             }
-
             return false;
         });
+
     }
 
     private void search(String query) {
@@ -90,7 +92,13 @@ public class SearchFragment extends Fragment {
                     searchResultAdapter.setOnItemClickListener(song -> {
                         Log.d(tag, "Mở bài hát có title :" + song.getTitle());
 
-                        AudioPlayerManager.getAudioService().start(song);
+
+                        new Thread(() -> {
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                AudioPlayerManager.getAudioService().start(song);
+                            });
+                        }).start();
+
                     });
                 });
             });
