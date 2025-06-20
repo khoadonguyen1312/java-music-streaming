@@ -50,14 +50,16 @@ public class CurrentPlaylistAdapter extends RecyclerView.Adapter<CurrentPlaylist
         Song song = songs.get(position);
         if (index_song == position) {
             holder.playlist_playing_icon.setVisibility(VISIBLE);
-
+            holder.playlist_title.setTextColor(0xffDC2525);
         } else {
 
         }
         holder.playlist_title.setText(song.getTitle());
         Glide.with(context).load(song.getImages().get(0).getUrl()).into(holder.playlist_thumb);
 
-    } public void updateData(List<Song> newList) {
+    }
+
+    public void updateData(List<Song> newList) {
         this.songs = newList;
         notifyDataSetChanged();
     }

@@ -1,5 +1,7 @@
 package com.khoadonguyen.java_music_streaming.presentation.fragment;
 
+import static android.view.View.VISIBLE;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +55,7 @@ public class CurrentPlaylist extends Fragment {
             @Override
             public void onClick(View v) {
                 ChangeScreen.popScreen(getActivity());
+
             }
         });
     }

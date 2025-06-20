@@ -3,6 +3,10 @@
     android:id="@+id/playlist_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="2dp">
@@ -38,6 +42,8 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_gravity="center"
+                android:layout_marginRight="6dp"
+                android:background="@android:color/holo_red_dark"
                 android:visibility="gone"
                 app:SpinKit_Color="@android:color/white" />
 

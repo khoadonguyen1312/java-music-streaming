@@ -18,7 +18,7 @@ public class Song {
     }
 
     private String id;
-
+    private String author;
     private String url;
 
     private List<AudioStream> audioLink;
@@ -38,8 +38,13 @@ public class Song {
 //        });
 //
 //    }
-    public Song(Builder builder) {
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public Song(Builder builder) {
+        this.author = builder.getAuthor();
         this.subtitlesStreams = builder.subtitlesStreams;
         this.id = builder.getId();
         this.url = builder.getUrl();
@@ -59,6 +64,11 @@ public class Song {
             this.duration = duration;
         }
 
+        public String getAuthor() {
+            return author;
+        }
+
+        private String author;
         private String id;
         private Duration duration;
         private String url;
@@ -76,6 +86,11 @@ public class Song {
 
         public Builder id(String id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder author(String author) {
+            this.author = author;
             return this;
         }
 
@@ -172,4 +187,25 @@ public class Song {
     public List<SubtitlesStream> getSubtitlesStreams() {
         return subtitlesStreams;
     }
+
+    public String gHighImage() {
+        if (images == null || images.isEmpty()) return null;
+
+        String maxImageString = null;
+        int maxArea = 0;
+
+        for (var image : images) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+            int area = width * height;
+
+            if (area > maxArea) {
+                maxArea = area;
+                maxImageString = image.getUrl();
+            }
+        }
+
+        return maxImageString;
+    }
+
 }

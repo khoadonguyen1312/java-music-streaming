@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "622494811922",
+    "project_id": "javamusicstreaming",
+    "storage_bucket": "javamusicstreaming.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622494811922:android:806ec780acf12f9defd5cb",
+        "android_client_info": {
+          "package_name": "com.khoadonguyen.java_music_streaming"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622494811922-t9g6mq1h1itodf8di7u32dafdfvarhe5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.khoadonguyen.java_music_streaming",
+            "certificate_hash": "72da5d3731f38225e582fe4edebe938fef6f2263"
+          }
+        },
+        {
+          "client_id": "622494811922-de5j20cv2rsq98nsocubjqdark6l6goo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYR0KC1LhkgIcRewM_LWPSs9l-VqPMRwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622494811922-de5j20cv2rsq98nsocubjqdark6l6goo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

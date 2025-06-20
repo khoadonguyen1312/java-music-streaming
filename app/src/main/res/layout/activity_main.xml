@@ -19,18 +19,21 @@
     <LinearLayout
         android:id="@+id/audio_bottomsheet"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:background="@color/bottomsheet"
         android:gravity="center_vertical|start"
         android:orientation="horizontal"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="6dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/navigation_bar">
 
         <ImageView
 
             android:id="@+id/audio_bottomsheet_thumb"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:scaleType="fitXY"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
 
             ></ImageView>
 
@@ -69,8 +72,10 @@
 
         <ImageButton
             android:id="@+id/audio_bottomsheet_pause_play"
-            android:layout_width="32dp"
-            android:layout_height="32dp"></ImageButton>
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+
+            android:background="@android:color/transparent"></ImageButton>
 
 
     </LinearLayout>

@@ -63,17 +63,16 @@ public class SearchFragment extends Fragment {
     }
 
     private void handleSearchEvent() {
-        searchView.getEditText().setOnEditorActionListener((v, keyCode, event) -> {
-
-            if (keyCode == EditorInfo.IME_ACTION_SEARCH) {
+        searchView.getEditText().setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 Log.d(tag, "search");
                 String query = searchView.getEditText().getText().toString();
                 search(query);
                 return true;
             }
-
             return false;
         });
+
     }
 
     private void search(String query) {

@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services") version "4.4.0" apply false
 }
 
 android {
@@ -37,6 +38,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -76,7 +78,24 @@ dependencies {
      * loading package
      */
 
-    implementation ("com.github.ybq:Android-SpinKit:1.4.0")
+    implementation("com.github.ybq:Android-SpinKit:1.4.0")
 
+    /**
+     * format pretty duraton
+     */
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation("org.apache.commons:commons-lang3:3.12.0")
 
+    /**
+     * firebase
+     */
+
+    // Firebase Authentication
+    implementation ("com.google.firebase:firebase-auth:22.3.0") // hoặc mới nhất
+
+    // Google Sign-In SDK
+    implementation ("com.google.android.gms:play-services-auth:21.0.0")
+
+    // (Optional) Firebase Core nếu dùng Analytics
+    implementation ("com.google.firebase:firebase-analytics:21.6.1")
 }
