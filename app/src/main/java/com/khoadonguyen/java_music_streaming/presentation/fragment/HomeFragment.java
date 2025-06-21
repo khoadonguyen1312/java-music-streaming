@@ -21,16 +21,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
+
 import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
+import com.khoadonguyen.java_music_streaming.presentation.Adapter.ContinuteAdapter;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.RecomandAdapter;
 import com.khoadonguyen.java_music_streaming.presentation.core.BottomSheet;
-
-import org.jetbrains.annotations.Async;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -43,6 +45,9 @@ public class HomeFragment extends Fragment {
     ImageButton playlist_button;
     TextView source_textview;
     GridView recomand_girdView;
+    Button test;
+    RecyclerView continute_recyclerView;
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -50,11 +55,11 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         source_textview = view.findViewById(R.id.source_textview);
         recomand_girdView = view.findViewById(R.id.home_fragment_recomand_girdview);
-
+        continute_recyclerView = view.findViewById(R.id.home_fragment_continute_listview);
         playlist_button = view.findViewById(R.id.home_fragment_playlist_button);
         sourceChange();
         recomanSong();
-
+        continuteView();
         playlist_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +73,7 @@ public class HomeFragment extends Fragment {
 
             }
         });
+        test();
 
     }
 
@@ -109,5 +115,35 @@ public class HomeFragment extends Fragment {
             }
         });
 
+    }
+
+    private void continuteView() {
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<Song> songs = new DynamicYoutubeExtractor().search("nhac trẻ").join();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isAdded()) {
+                            Context context = requireContext();
+                            ContinuteAdapter continuteAdapter = new ContinuteAdapter(context, songs);
+                            continute_recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true));
+                            continute_recyclerView.setAdapter(continuteAdapter);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void test() {
+        test = getView().findViewById(R.id.test_button);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 }

@@ -91,11 +91,20 @@ dependencies {
      */
 
     // Firebase Authentication
-    implementation ("com.google.firebase:firebase-auth:22.3.0") // hoặc mới nhất
+    implementation("com.google.firebase:firebase-auth:22.3.0") // hoặc mới nhất
 
     // Google Sign-In SDK
-    implementation ("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     // (Optional) Firebase Core nếu dùng Analytics
-    implementation ("com.google.firebase:firebase-analytics:21.6.1")
+    implementation("com.google.firebase:firebase-analytics:21.6.1")
+
+    /**
+     * gpt
+     */
+    // https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/client
+    implementation("com.theokanning.openai-gpt3-java:client:0.18.2")
+    // https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/service
+    implementation("com.theokanning.openai-gpt3-java:service:0.18.2")
+
 }

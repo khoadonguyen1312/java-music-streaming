@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_gird_card_background"
+    android:layout_width="167dp"
+    android:layout_height="98dp"
+    android:background="@color/BrightTurquoise"
+    android:padding="12dp"
+
+    >
+
+    <TextView
+        android:id="@+id/search_gird_card_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kpop"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/search_gird_card_thumb"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="4dp"
+        android:rotation="27"
+        android:scaleType="centerCrop"
+        android:src="@drawable/pikachu"
+        android:translationX="12dp"
+        android:translationY="24dp" />
+</FrameLayout>

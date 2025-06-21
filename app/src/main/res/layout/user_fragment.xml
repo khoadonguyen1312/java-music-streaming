@@ -54,7 +54,7 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn"
+                        android:id="@+id/user_fragment_sign_in"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:layout_margin="16dp"
