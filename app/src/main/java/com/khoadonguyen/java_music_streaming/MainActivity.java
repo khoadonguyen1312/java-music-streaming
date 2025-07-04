@@ -21,12 +21,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.khoadonguyen.java_music_streaming.Model.Song;
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -201,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onChanged(Playlist songs) {
                             Song song = songs.get(songs.gIndex());
-                            Glide.with(getBaseContext()).load(song.gHighImage()).into(thumb);
+                            Glide.with(getBaseContext()).load(song.gHighImage()).transform(new RoundedCorners(30)).into(thumb);
                             title.setText(song.getTitle());
                         }
                     });

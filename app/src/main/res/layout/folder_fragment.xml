@@ -82,7 +82,6 @@
                     android:textSize="19sp"></TextView>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/folder_fragment_download_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

@@ -70,6 +70,8 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
     private MediaSession mediaSession;
 
     private MutableLiveData<Duration> current_song_pos = new MutableLiveData<>(Duration.ZERO);
+
+    private MutableLiveData<Duration> max_pos = new MutableLiveData<>(Duration.ZERO);
     private final IBinder binder = new LocalBinder();
 
     public ExoPlayer getAudioPlayer() {
@@ -101,11 +103,16 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
         public void run() {
             if (audioPlayer != null && playing.getValue() == true) {
                 current_song_pos.postValue(Duration.ofMillis(gcurrentpos()));
+                max_pos.postValue(Duration.ofMillis(gmaxpost()));
 
                 handler.postDelayed(this, 500);
             }
         }
     };
+
+    public MutableLiveData<Duration> getMax_pos() {
+        return max_pos;
+    }
 
     public void observePlayer() {
         audioPlayer.addListener(new Player.Listener() {
@@ -140,6 +147,10 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
         return audioPlayer.getCurrentPosition();
     }
 
+    private Long gmaxpost() {
+        return audioPlayer.getDuration();
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -154,43 +165,59 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
 
     @Override
     public void start(Song song) {
-        try {
+        executorService.execute(() -> {
             Playlist current = playlist.getValue();
-            current.clear();
+            if (current == null) current = new Playlist();
+            else current.clear();
 
-            Log.d(tag, "khởi tạo bài hát đầu tiên của trình phát");
-            Song firstSong = extractor.gsong(song.getUrl()).join();
-            Log.d(tag, "lấy đuược first song title :" + firstSong.getTitle());
-            if (playlist.getValue() == null) {
-                playlist.setValue(new Playlist());
-            }
-            current.add(firstSong);
+            Log.d(tag, "Bắt đầu tải bài hát đầu tiên...");
 
-            Log.d(tag, "add first song to playlist");
-            playlist.setValue(current);
-            playSong(firstSong);
-            addSongsToplaylist(firstSong);
+            Playlist finalCurrent = current;
+            extractor.gsong(song.getUrl())
+                    .thenAccept(firstSong -> {
+                        Log.d(tag, "Đã tải xong bài đầu tiên: " + firstSong.getTitle());
 
-        } catch (RuntimeException e) {
+                        finalCurrent.add(firstSong);
+                        playlist.postValue(finalCurrent);
 
-            throw new RuntimeException(e);
-        }
 
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            playSong(firstSong);
+                        });
+
+
+                        addSongsToplaylist(firstSong);
+                    })
+                    .exceptionally(e -> {
+                        Log.e(tag, "Lỗi khi tải bài hát đầu tiên", e);
+                        return null;
+                    });
+        });
     }
 
     private void addSongsToplaylist(Song song) {
-        executorService.execute(() -> {
-            List<Song> songs = extractor.recomandSong(song).join();
+        extractor.recomandSong(song)
+                .thenAccept(songs -> {
 
-            Playlist playlistCache = playlist.getValue();
-            if (playlistCache != null) {
-                playlistCache.addAll(songs);
-                playlist.postValue(playlistCache);
-                Log.d(tag, "độ dài playlist là " + playlist.getValue().size());
-            }
-        });
+                    Playlist playlistCache = new Playlist();
 
+                    Playlist current = playlist.getValue();
+                    if (current != null) {
+                        playlistCache.addAll(current);
+                    }
+
+
+                    playlistCache.addAll(songs);
+                    playlist.postValue(playlistCache);
+
+                    Log.d(tag, "Đã thêm bài gợi ý. Tổng bài: " + playlistCache.size());
+                })
+                .exceptionally(e -> {
+                    Log.e(tag, "Lỗi khi lấy bài gợi ý", e);
+                    return null;
+                });
     }
+
 
     @Override
     public void next() {
@@ -207,7 +234,7 @@ public class DynamicAudioPlayerImpl extends MediaSessionService implements Dynam
     @Override
     public void back() {
         Playlist current = playlist.getValue();
-        if (current != null && current.listIterator().hasPrevious()) {
+        if (current != null && current.gIndex() > 0) {
             current.back();
             playlist.setValue(current);
             playSong(null);

@@ -60,9 +60,8 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         searchView = view.findViewById(R.id.search_view);
         recyclerView = view.findViewById(R.id.recyclerview_search_results);
-        topgeneres = view.findViewById(R.id.search_fragment_top_generes);
+
         handleSearchEvent();
-        topgeneres();
 
 
     }
@@ -112,11 +111,6 @@ public class SearchFragment extends Fragment {
             throw new RuntimeException(e);
         }
 
-
-    }
-
-    private void topgeneres() {
-        topgeneres.setAdapter(new SearchFragmentGirdAdapter(SearchGirdItem.items, getLayoutInflater()));
 
     }
 

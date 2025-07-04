@@ -6,6 +6,7 @@ import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.Service.DynamicDownloader;
 import com.khoadonguyen.java_music_streaming.Service.extractor.Extractor;
+import com.khoadonguyen.java_music_streaming.Util.GetHighQualityVideo;
 
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.NewPipe;
@@ -16,6 +17,7 @@ import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.extractor.stream.VideoStream;
 
 
 import java.io.IOException;
@@ -48,7 +50,12 @@ public class DynamicYoutubeExtractor implements Extractor {
                             .subtitlesStreams(streamInfo.getSubtitles())
                             .author(streamInfo.getSubChannelName())
                             .title(streamInfo.getName()).url(streamInfo.getUrl()).images(streamInfo.getThumbnails()).source(Source.YOUTUBE).id(streamInfo.getId()).audioLink(streamInfo.getAudioStreams()).build();
+                    List<VideoStream> videoStreams = streamInfo.getVideoOnlyStreams();
 
+
+                    String video_url = GetHighQualityVideo.getBestVideoStream(videoStreams).getUrl();
+                    song.setShortThumbVideo(video_url);
+                    Log.d(tag, video_url);
                     Log.d(tag, "tra ve thanh cong song object voi ten :" + song.getTitle());
 
                     return song;
@@ -135,6 +142,7 @@ public class DynamicYoutubeExtractor implements Extractor {
     public CompletableFuture<List<Song>> recomandSong(Song song) {
         return CompletableFuture.supplyAsync(() -> {
             try {
+                Log.d(tag, "đang lấy video recomand cho video có title" + song.getTitle());
                 List<CompletableFuture<Song>> completableFutureList = new ArrayList<>();
 
 
@@ -159,8 +167,9 @@ public class DynamicYoutubeExtractor implements Extractor {
                     }
                     return results;
 
+                } else {
+                    Log.e(tag, "lấy không thành công recomend video cho video có tên " + song.getTitle());
                 }
-
 
             } catch (RuntimeException e) {
                 throw new RuntimeException(e);
@@ -177,4 +186,95 @@ public class DynamicYoutubeExtractor implements Extractor {
             return null;
         });
     }
+
+    public CompletableFuture<List<Song>> createPlaylistFromQueries(List<String> queries) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<CompletableFuture<List<Song>>> futureList = new ArrayList<>();
+
+
+            for (String query : queries) {
+                futureList.add(search(query));
+            }
+
+
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+                    futureList.toArray(new CompletableFuture[0])
+            );
+
+            try {
+                allFutures.get();
+
+
+                List<Song> allSongs = futureList.stream()
+                        .flatMap(future -> future.join().stream())
+                        .distinct()
+                        .collect(Collectors.toList());
+
+
+                return allSongs.stream().limit(50).collect(Collectors.toList());
+
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException("Lỗi khi tạo playlist từ queries", e);
+            }
+        });
+    }
+
+    public CompletableFuture<List<Song>> searchOffice(String query) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                YoutubeService youtubeService = initService();
+                SearchExtractor searchExtractor = youtubeService.getSearchExtractor(query);
+                Log.d(tag, "Lấy thành công search extractor");
+
+                if (searchExtractor != null) {
+                    Log.d(tag, "Lấy thành công search cho query: " + query);
+                    searchExtractor.fetchPage();
+
+                    List<InfoItem> infoItems = searchExtractor.getInitialPage().getItems();
+
+                    List<Song> songs = infoItems.stream()
+                            .filter(item -> item.getInfoType() == InfoItem.InfoType.STREAM)
+                            .map(item -> (StreamInfoItem) item)
+                            .filter(item -> {
+                                String title = item.getName().toLowerCase();
+                                String uploader = item.getUploaderName().toLowerCase();
+
+                                // Loại bỏ các video không chính thức
+                                boolean isOfficialTitle = title.contains("official music video") ||
+                                        title.contains("official mv") ||
+                                        title.contains("official lyric") ||
+                                        title.contains("vevo");
+
+                                boolean isUploaderTrusted = uploader.contains("vevo") ||
+                                        uploader.contains("official") ||
+                                        uploader.contains("topic");
+
+                                boolean isNotCoverOrRemix = !title.contains("cover") &&
+                                        !title.contains("remix") &&
+                                        !title.contains("karaoke") &&
+                                        !title.contains("sped up") &&
+                                        !title.contains("slowed");
+
+                                return isOfficialTitle && isUploaderTrusted && isNotCoverOrRemix;
+                            })
+                            .map(item -> new Song.Builder()
+                                    .url(item.getUrl())
+                                    .title(item.getName())
+                                    .images(item.getThumbnails())
+                                    .source(Source.YOUTUBE)
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    Log.d(tag, "Lấy thành công danh sách video official cho search query: " + query);
+                    return songs;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Lỗi khi search: " + e.getMessage(), e);
+            }
+
+            return null;
+        });
+    }
+
+
 }

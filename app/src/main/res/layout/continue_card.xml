@@ -1,10 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/continute_card_thumb"
-    android:layout_width="182dp"
-    android:layout_height="182dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
+    android:layout_marginBottom="16dp"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:scaleType="centerCrop"></ImageView>
+    android:orientation="vertical">
+
+    <!-- Thumbnail -->
+    <ImageView
+        android:id="@+id/continute_card_thumb"
+        android:layout_width="182dp"
+        android:layout_height="102dp"
+        android:contentDescription="Video Thumbnail"
+
+        android:scaleType="centerCrop" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/continute_card_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="Tên video rất dài có thể hiển thị ở đây"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+    <!-- Channel / Author -->
+    <TextView
+        android:id="@+id/continute_card_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="4dp"
+        android:text="Tác giả"
+        android:textColor="#AAAAAA"
+        android:textSize="12sp" />
+</LinearLayout>

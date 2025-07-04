@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
@@ -20,7 +21,7 @@
         android:id="@+id/audio_bottomsheet"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/bottomsheet"
+
         android:gravity="center_vertical|start"
         android:orientation="horizontal"
         android:paddingHorizontal="6dp"
@@ -29,11 +30,10 @@
         app:layout_constraintBottom_toTopOf="@id/navigation_bar">
 
         <ImageView
-
             android:id="@+id/audio_bottomsheet_thumb"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:scaleType="centerCrop"
+
 
             ></ImageView>
 

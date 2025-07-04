@@ -6,7 +6,6 @@
 
     <!-- Embedded Bottom Sheet with BottomSheetBehavior -->
     <FrameLayout
-        android:id="@+id/standard_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="240dp"
 

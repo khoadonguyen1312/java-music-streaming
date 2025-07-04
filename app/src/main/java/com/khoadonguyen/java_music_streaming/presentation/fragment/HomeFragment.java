@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,11 +26,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.bumptech.glide.Glide;
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
 
+import com.khoadonguyen.java_music_streaming.Service.Auth.User;
 import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
+import com.khoadonguyen.java_music_streaming.Util.RandomSlug;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.ContinuteAdapter;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.RecomandAdapter;
 import com.khoadonguyen.java_music_streaming.presentation.core.BottomSheet;
@@ -46,7 +50,7 @@ public class HomeFragment extends Fragment {
     TextView source_textview;
     GridView recomand_girdView;
     Button test;
-    RecyclerView continute_recyclerView;
+    RecyclerView continute_recyclerView, listview2, listview3, listview4;
 
 
     @Override
@@ -55,11 +59,11 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         source_textview = view.findViewById(R.id.source_textview);
         recomand_girdView = view.findViewById(R.id.home_fragment_recomand_girdview);
-        continute_recyclerView = view.findViewById(R.id.home_fragment_continute_listview);
+
         playlist_button = view.findViewById(R.id.home_fragment_playlist_button);
         sourceChange();
-        recomanSong();
-        continuteView();
+
+
         playlist_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +77,8 @@ public class HomeFragment extends Fragment {
 
             }
         });
-        test();
+
+        userInfo();
 
     }
 
@@ -104,24 +109,24 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         if (isAdded()) {
                             Context context = requireContext();
-                            recomand_girdView.setAdapter(new RecomandAdapter(context, songs.subList(0, 6)));
-                        } else {
+                            RecomandAdapter adapter = new RecomandAdapter(context, songs.subList(0, 6));
+                            recomand_girdView.setAdapter(adapter);
+
 
                         }
                     }
                 });
-
-
             }
         });
-
     }
+
 
     private void continuteView() {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                List<Song> songs = new DynamicYoutubeExtractor().search("nhac trẻ").join();
+
+                List<Song> songs = new DynamicYoutubeExtractor().search(RandomSlug.gSlugs()).join();
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -137,13 +142,33 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void test() {
-        test = getView().findViewById(R.id.test_button);
-        test.setOnClickListener(new View.OnClickListener() {
+    private void handlelistview2() {
+        executorService.execute(new Runnable() {
             @Override
-            public void onClick(View v) {
+            public void run() {
 
+                List<Song> songs = new DynamicYoutubeExtractor().search(RandomSlug.gSlugs()).join();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isAdded()) {
+                            Context context = requireContext();
+                            ContinuteAdapter continuteAdapter = new ContinuteAdapter(context, songs);
+                            listview2.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true));
+                            listview2.setAdapter(continuteAdapter);
+                        }
+                    }
+                });
             }
         });
+    }
+
+
+    private void userInfo() {
+        ImageView avt = getView().findViewById(R.id.home_fragment_avt);
+        TextView email = getView().findViewById(R.id.home_fragment_email);
+        String avt_result = new User().getAvt();
+        Glide.with(requireContext()).load(avt_result).into(avt);
+        email.setText(new User().getEmail());
     }
 }

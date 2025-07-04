@@ -4,7 +4,7 @@
     android:id="@+id/search_gird_card_background"
     android:layout_width="167dp"
     android:layout_height="98dp"
-    android:background="@color/BrightTurquoise"
+
     android:padding="12dp"
 
     >
