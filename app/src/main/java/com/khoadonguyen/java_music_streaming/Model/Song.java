@@ -3,6 +3,7 @@ package com.khoadonguyen.java_music_streaming.Model;
 import androidx.media3.common.MediaItem;
 
 import org.schabi.newpipe.extractor.Image;
+import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 
@@ -20,9 +21,10 @@ public class Song {
     private List<SubtitlesStream> subtitlesStreams;
     private Duration duration;
     private MediaItem shortThumbVideo;
+    private ChannelInfo channelInfo;
 
-    // Constructors
-    public Song() {}
+    public Song() {
+    }
 
     public Song(Builder builder) {
         this.id = builder.id;
@@ -34,32 +36,95 @@ public class Song {
         this.images = builder.images;
         this.subtitlesStreams = builder.subtitlesStreams;
         this.duration = builder.duration;
+        this.channelInfo = builder.channelInfo;
     }
 
-    // Getters
-    public String getId() { return id; }
-    public String getAuthor() { return author; }
-    public String getUrl() { return url; }
-    public List<AudioStream> getAudioLink() { return audioLink; }
-    public Source getSource() { return source; }
-    public String getTitle() { return title; }
-    public List<Image> getImages() { return images; }
-    public List<SubtitlesStream> getSubtitlesStreams() { return subtitlesStreams; }
-    public Duration getDuration() { return duration; }
-    public MediaItem getShortThumbVideo() { return shortThumbVideo; }
 
-    // Setters
-    public void setId(String id) { this.id = id; }
-    public void setAuthor(String author) { this.author = author; }
-    public void setUrl(String url) { this.url = url; }
-    public void setAudioLink(List<AudioStream> audioLink) { this.audioLink = audioLink; }
-    public void setSource(Source source) { this.source = source; }
-    public void setTitle(String title) { this.title = title; }
-    public void setImages(List<Image> images) { this.images = images; }
-    public void setSubtitlesStreams(List<SubtitlesStream> subtitlesStreams) { this.subtitlesStreams = subtitlesStreams; }
-    public void setDuration(Duration duration) { this.duration = duration; }
+    public String getId() {
+        return id;
+    }
 
-    // Special method: Set short preview video
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public List<AudioStream> getAudioLink() {
+        return audioLink;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public List<SubtitlesStream> getSubtitlesStreams() {
+        return subtitlesStreams;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public MediaItem getShortThumbVideo() {
+        return shortThumbVideo;
+    }
+
+    public ChannelInfo getChannelInfo() {
+        return channelInfo;
+    } // ✅ GETTER
+
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setAudioLink(List<AudioStream> audioLink) {
+        this.audioLink = audioLink;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public void setSubtitlesStreams(List<SubtitlesStream> subtitlesStreams) {
+        this.subtitlesStreams = subtitlesStreams;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setChannelInfo(ChannelInfo channelInfo) {
+        this.channelInfo = channelInfo;
+    } // ✅ SETTER
+
     public void setShortThumbVideo(String videoUrl) {
         if (videoUrl == null) return;
 
@@ -78,7 +143,6 @@ public class Song {
         this.shortThumbVideo = mediaItem;
     }
 
-    // Utility: Get highest resolution image
     public String gHighImage() {
         if (images == null || images.isEmpty()) return null;
 
@@ -99,7 +163,7 @@ public class Song {
         return maxImageUrl;
     }
 
-    // Builder pattern
+
     public static class Builder {
         private String id;
         private String author;
@@ -110,16 +174,57 @@ public class Song {
         private List<Image> images;
         private List<SubtitlesStream> subtitlesStreams;
         private Duration duration;
+        private ChannelInfo channelInfo; // ✅ THÊM VÀO BUILDER
 
-        public Builder id(String id) { this.id = id; return this; }
-        public Builder author(String author) { this.author = author; return this; }
-        public Builder url(String url) { this.url = url; return this; }
-        public Builder audioLink(List<AudioStream> audioLink) { this.audioLink = audioLink; return this; }
-        public Builder source(Source source) { this.source = source; return this; }
-        public Builder title(String title) { this.title = title; return this; }
-        public Builder images(List<Image> images) { this.images = images; return this; }
-        public Builder subtitlesStreams(List<SubtitlesStream> subtitlesStreams) { this.subtitlesStreams = subtitlesStreams; return this; }
-        public Builder duration(Duration duration) { this.duration = duration; return this; }
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder author(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public Builder url(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Builder audioLink(List<AudioStream> audioLink) {
+            this.audioLink = audioLink;
+            return this;
+        }
+
+        public Builder source(Source source) {
+            this.source = source;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder images(List<Image> images) {
+            this.images = images;
+            return this;
+        }
+
+        public Builder subtitlesStreams(List<SubtitlesStream> subtitlesStreams) {
+            this.subtitlesStreams = subtitlesStreams;
+            return this;
+        }
+
+        public Builder duration(Duration duration) {
+            this.duration = duration;
+            return this;
+        }
+
+        public Builder channelInfo(ChannelInfo channelInfo) {
+            this.channelInfo = channelInfo;
+            return this;
+        } // ✅
 
         public Song build() {
             return new Song(this);

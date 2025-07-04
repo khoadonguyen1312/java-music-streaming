@@ -9,14 +9,19 @@ import com.khoadonguyen.java_music_streaming.Service.extractor.Extractor;
 import com.khoadonguyen.java_music_streaming.Util.GetHighQualityVideo;
 
 import org.schabi.newpipe.extractor.InfoItem;
+import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.linkhandler.LinkHandler;
+import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler;
 import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.extractor.stream.StreamInfoItemsCollector;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 
 
@@ -55,8 +60,10 @@ public class DynamicYoutubeExtractor implements Extractor {
 
                     String video_url = GetHighQualityVideo.getBestVideoStream(videoStreams).getUrl();
                     song.setShortThumbVideo(video_url);
-                    Log.d(tag, video_url);
+
                     Log.d(tag, "tra ve thanh cong song object voi ten :" + song.getTitle());
+                    ChannelInfo channelInfo = ChannelInfo.getInfo(streamInfo.getUploaderUrl());
+                    song.setChannelInfo(channelInfo);
 
                     return song;
                 }

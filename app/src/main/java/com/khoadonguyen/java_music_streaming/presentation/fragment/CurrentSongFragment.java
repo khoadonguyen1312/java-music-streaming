@@ -131,7 +131,7 @@ public class CurrentSongFragment extends Fragment {
                 AudioPlayerManager.getAudioService().seekTo(Duration.ofMillis(seekPosition));
             }
         });
-        back_screen.setOnClickListener(new View.OnClickListener() {
+        skip_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AudioPlayerManager.getAudioService().back();
