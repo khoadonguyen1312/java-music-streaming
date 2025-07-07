@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/current_song_fragment_appbar_more"
-        android:icon="@drawable/more_vert_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
-        android:title="Search"
-        app:showAsAction="always" />
-</menu>

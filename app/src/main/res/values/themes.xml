@@ -1,15 +1,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Javamusicstreaming" parent="Theme.Material3.DynamicColors.Dark.NoActionBar">
-        <!-- Customize your light theme here. -->
+
+
         <item name="colorPrimary">#00FFDE</item>
-        <item name="backgroundColor">#121111</item>
+        <item name="android:textColor">#F5F5F5</item>
 
-        <!-- Giữ màu status bar tự nhiên / mặc định hệ thống -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
 
-        <!-- Tùy chọn: nếu muốn biểu tượng trên status bar sáng (trắng) -->
-        <item name="android:windowLightStatusBar">false</item>
+
+
     </style>
 
     <style name="Theme.Javamusicstreaming" parent="Base.Theme.Javamusicstreaming" />

@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="BrightTurquoise">#00FFDE</color>
-    <color name="background_color">#121111</color>
-    <color name="gray">#DBDBDB</color>
-    <color name="bottomsheet">#212121</color>
-    <color name="black_glass">#99000000
-    </color>
+    <!-- Primary Colors -->
+    <color name="background_color">#121212</color>
+    <!-- Accent Colors -->
 
-    <color name="test">#2596be</color>
+    <!-- Background Colors -->
 
+    <!-- Surface Colors -->
+
+    <!-- Text Colors -->
+
+    <!-- Control Colors -->
+
+    <!-- Slider Colors -->
+
+    <!-- Card Colors -->
+
+    <!-- Ripple Colors -->
+
+    <!-- Gradient Colors -->
+
+    <!-- Status Colors -->
+    <color name="error">#F44336</color>
+
+    <!-- Additional UI Colors -->
+
+    <!-- Transparent Colors -->
+
+    <!-- Material Colors (fallback) -->
+
+    <!-- Gray Scale -->
+
+    <!-- Music Player Specific Colors -->
+
+    <!-- Legacy Colors (for backward compatibility) -->
+    <color name="white">#FFFFFF</color>
+
+    <!-- Theme specific colors -->
+    <color name="colorError">@color/error</color>
 </resources>

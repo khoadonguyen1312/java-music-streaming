@@ -1,7 +1,13 @@
 package com.khoadonguyen.java_music_streaming.Model;
 
+import android.util.Log;
+
+import androidx.media3.common.MediaItem;
+
+import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 
 import org.schabi.newpipe.extractor.Image;
+import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 
@@ -9,159 +15,42 @@ import java.time.Duration;
 import java.util.List;
 
 public class Song {
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
-    public Duration getDuration() {
-        return duration;
-    }
-
+    private static String tag = "Song";
     private String id;
     private String author;
     private String url;
-
     private List<AudioStream> audioLink;
     private Source source;
     private String title;
-
     private List<Image> images;
     private List<SubtitlesStream> subtitlesStreams;
-
     private Duration duration;
+    private MediaItem shortThumbVideo;
+    private ChannelInfo channelInfo;
 
-
-    //    public AudioStream gHighestAudioStream(){
-//        return audioLink.stream().map(audioStream -> {
-//            audioStream.getb
-//
-//        });
-//
-//    }
-
-    public String getAuthor() {
-        return author;
+    public Song() {
     }
 
     public Song(Builder builder) {
-        this.author = builder.getAuthor();
+        this.id = builder.id;
+        this.author = builder.author;
+        this.url = builder.url;
+        this.audioLink = builder.audioLink;
+        this.source = builder.source;
+        this.title = builder.title;
+        this.images = builder.images;
         this.subtitlesStreams = builder.subtitlesStreams;
-        this.id = builder.getId();
-        this.url = builder.getUrl();
-        this.audioLink = builder.getAudioLink();
-        this.source = builder.getSource();
-        this.title = builder.getTitle();
-        this.images = builder.getImages();
-        this.duration = builder.getDuration();
+        this.duration = builder.duration;
+        this.channelInfo = builder.channelInfo;
     }
 
-    public static class Builder {
-        public Duration getDuration() {
-            return duration;
-        }
-
-        public void setDuration(Duration duration) {
-            this.duration = duration;
-        }
-
-        public String getAuthor() {
-            return author;
-        }
-
-        private String author;
-        private String id;
-        private Duration duration;
-        private String url;
-
-        private List<AudioStream> audioLink;
-        private Source source;
-        private String title;
-
-        private List<Image> images;
-        private List<SubtitlesStream> subtitlesStreams;
-
-        public Song build() {
-            return new Song(this);
-        }
-
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder author(String author) {
-            this.author = author;
-            return this;
-        }
-
-        public Builder url(String url) {
-            this.url = url;
-            return this;
-
-        }
-
-        public Builder duration(Duration duration) {
-            this.duration = duration;
-            return this;
-        }
-
-        public Builder audioLink(List<AudioStream> audioLink) {
-            this.audioLink = audioLink;
-            return this;
-
-        }
-
-        public Builder source(Source source) {
-            this.source = source;
-            return this;
-        }
-
-        public Builder title(String title) {
-            this.title = title;
-            return this;
-        }
-
-        public Builder images(List<Image> images) {
-            this.images = images;
-            return this;
-        }
-
-        public Builder subtitlesStreams(List<SubtitlesStream> subtitlesStreams) {
-            this.subtitlesStreams = subtitlesStreams;
-            return this;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public List<AudioStream> getAudioLink() {
-            return audioLink;
-        }
-
-        public Source getSource() {
-            return source;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public List<Image> getImages() {
-            return images;
-        }
-
-        public List<SubtitlesStream> getSubtitlesStreams() {
-            return subtitlesStreams;
-        }
-    }
 
     public String getId() {
         return id;
+    }
+
+    public String getAuthor() {
+        return author;
     }
 
     public String getUrl() {
@@ -188,24 +77,175 @@ public class Song {
         return subtitlesStreams;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public MediaItem getShortThumbVideo() {
+        return shortThumbVideo;
+    }
+
+    public ChannelInfo getChannelInfo() {
+        return channelInfo;
+    } // ✅ GETTER
+
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setAudioLink(List<AudioStream> audioLink) {
+        this.audioLink = audioLink;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public void setSubtitlesStreams(List<SubtitlesStream> subtitlesStreams) {
+        this.subtitlesStreams = subtitlesStreams;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setChannelInfo(ChannelInfo channelInfo) {
+        this.channelInfo = channelInfo;
+    }
+
+    public void setShortThumbVideo(String videoUrl) {
+        if (videoUrl == null) return;
+
+        long startMs = 15000;
+        long endMs = 30000;
+
+        MediaItem mediaItem = new MediaItem.Builder().setUri(videoUrl).setClippingConfiguration(new MediaItem.ClippingConfiguration.Builder().setStartPositionMs(startMs).setEndPositionMs(endMs).build()).build();
+
+        this.shortThumbVideo = mediaItem;
+    }
+
     public String gHighImage() {
         if (images == null || images.isEmpty()) return null;
 
-        String maxImageString = null;
+        String maxImageUrl = null;
         int maxArea = 0;
 
-        for (var image : images) {
+        for (Image image : images) {
             int width = image.getWidth();
             int height = image.getHeight();
             int area = width * height;
 
             if (area > maxArea) {
                 maxArea = area;
-                maxImageString = image.getUrl();
+                maxImageUrl = image.getUrl();
             }
         }
 
-        return maxImageString;
+        return maxImageUrl;
     }
 
+    public void checkIfFacvorite(LoveSongRespository.FavoriteCheckCallback callback) {
+        Log.d(tag, "đang check facvorite");
+        LoveSongRespository loveSongRespository = new LoveSongRespository();
+        loveSongRespository.isFavorite(this, callback);
+    }
+
+    public void addfacvorite(Runnable onComplete) {
+        LoveSongRespository loveSongRespository = new LoveSongRespository();
+        loveSongRespository.addFavorite(this, success -> {
+            if (success && onComplete != null) onComplete.run();
+        });
+    }
+
+    public void removefacvorite(Runnable onComplete) {
+        LoveSongRespository loveSongRespository = new LoveSongRespository();
+        loveSongRespository.removeFavorite(this, success -> {
+            if (success && onComplete != null) onComplete.run();
+        });
+    }
+
+
+    public static class Builder {
+        private String id;
+        private String author;
+        private String url;
+        private List<AudioStream> audioLink;
+        private Source source;
+        private String title;
+        private List<Image> images;
+        private List<SubtitlesStream> subtitlesStreams;
+        private Duration duration;
+        private ChannelInfo channelInfo; // ✅ THÊM VÀO BUILDER
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder author(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public Builder url(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Builder audioLink(List<AudioStream> audioLink) {
+            this.audioLink = audioLink;
+            return this;
+        }
+
+        public Builder source(Source source) {
+            this.source = source;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder images(List<Image> images) {
+            this.images = images;
+            return this;
+        }
+
+        public Builder subtitlesStreams(List<SubtitlesStream> subtitlesStreams) {
+            this.subtitlesStreams = subtitlesStreams;
+            return this;
+        }
+
+        public Builder duration(Duration duration) {
+            this.duration = duration;
+            return this;
+        }
+
+        public Builder channelInfo(ChannelInfo channelInfo) {
+            this.channelInfo = channelInfo;
+            return this;
+        }
+
+        public Song build() {
+            return new Song(this);
+        }
+    }
 }

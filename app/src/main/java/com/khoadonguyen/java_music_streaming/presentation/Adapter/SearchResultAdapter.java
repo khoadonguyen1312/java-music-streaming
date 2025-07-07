@@ -61,7 +61,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         }
         holder.source.setText(source.toString());
-        Glide.with(context).load(song.getImages().getLast().getUrl()).into(holder.thumb);
+        Glide.with(context).load(song.gHighImage()).into(holder.thumb);
     }
 
     @Override

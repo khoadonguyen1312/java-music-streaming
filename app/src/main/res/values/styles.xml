@@ -1,12 +1,3 @@
 <resources>
 
-    <style name="audio_bottom_slider_style" parent="Widget.MaterialComponents.Slider">
-        <item name="trackHeight">2dp</item>
-        <item name="thumbRadius">0dp</item>
-        <item name="thumbElevation">0dp</item>
-        <item name="haloRadius">0dp</item>
-
-
-        <item name="thumbColor">@android:color/transparent</item>
-    </style>
 </resources>

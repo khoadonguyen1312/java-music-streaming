@@ -42,12 +42,17 @@ public class SourceExtractor {
     public Extractor gExtractor(Context context) {
         try {
             Log.d("gsource", "lấy extractor");
+
             if (gSource(context) == 0) {
-                Log.d("", "youtube service");
-                return new DynamicYoutubeExtractor();
+                if (dynamicYoutubeExtractor == null) {
+                    dynamicYoutubeExtractor = new DynamicYoutubeExtractor();
+                }
+                return dynamicYoutubeExtractor;
             } else {
-                Log.d("", "Soundcloud service");
-                return new DynamicSoundCloudExtractor();
+                if (dynamicSoundCloudExtractor == null) {
+                    dynamicSoundCloudExtractor = new DynamicSoundCloudExtractor();
+                }
+                return dynamicSoundCloudExtractor;
             }
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
