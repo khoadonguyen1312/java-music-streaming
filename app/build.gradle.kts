@@ -85,3 +85,4 @@ dependencies {
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
 }
+apply(plugin = "com.google.gms.google-services")

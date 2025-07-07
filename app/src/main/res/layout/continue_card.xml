@@ -1,46 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginHorizontal="12dp"
-    android:layout_marginBottom="16dp"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="116dp"
+    android:layout_height="168dp"
+    android:orientation="vertical"
+    android:layout_margin="4dp"
+    android:padding="6dp"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true"
-    android:orientation="vertical">
+    android:focusable="true">
 
-    <!-- Thumbnail -->
+
     <ImageView
         android:id="@+id/continute_card_thumb"
-        android:layout_width="182dp"
-        android:layout_height="102dp"
+        android:layout_width="104dp"
+        android:layout_height="104dp"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="centerCrop"
         android:contentDescription="Video Thumbnail"
 
-        android:scaleType="centerCrop" />
+        android:clipToOutline="true" />
 
-    <!-- Title -->
+
     <TextView
         android:id="@+id/continute_card_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="Tên video rất dài có thể hiển thị ở đây"
+        android:text="Tên video"
         android:textColor="@android:color/white"
         android:textSize="14sp" />
 
-    <!-- Channel / Author -->
+
     <TextView
         android:id="@+id/continute_card_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginBottom="4dp"
         android:text="Tác giả"
         android:textColor="#AAAAAA"
         android:textSize="12sp" />

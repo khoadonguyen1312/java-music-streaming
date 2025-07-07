@@ -21,6 +21,7 @@
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:backgroundTint="@color/background_color"
         android:hint="Search..."
 
         app:layout_anchor="@id/search_bar">
@@ -28,7 +29,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_search_results"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="wrap_content"
+           ></androidx.recyclerview.widget.RecyclerView>
     </com.google.android.material.search.SearchView>
 
     <androidx.core.widget.NestedScrollView

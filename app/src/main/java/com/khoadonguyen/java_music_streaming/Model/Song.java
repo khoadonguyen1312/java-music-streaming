@@ -1,6 +1,10 @@
 package com.khoadonguyen.java_music_streaming.Model;
 
+import android.util.Log;
+
 import androidx.media3.common.MediaItem;
+
+import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 
 import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
@@ -11,6 +15,7 @@ import java.time.Duration;
 import java.util.List;
 
 public class Song {
+    private static String tag = "Song";
     private String id;
     private String author;
     private String url;
@@ -123,7 +128,7 @@ public class Song {
 
     public void setChannelInfo(ChannelInfo channelInfo) {
         this.channelInfo = channelInfo;
-    } // ✅ SETTER
+    }
 
     public void setShortThumbVideo(String videoUrl) {
         if (videoUrl == null) return;
@@ -131,14 +136,7 @@ public class Song {
         long startMs = 15000;
         long endMs = 30000;
 
-        MediaItem mediaItem = new MediaItem.Builder()
-                .setUri(videoUrl)
-                .setClippingConfiguration(
-                        new MediaItem.ClippingConfiguration.Builder()
-                                .setStartPositionMs(startMs)
-                                .setEndPositionMs(endMs)
-                                .build())
-                .build();
+        MediaItem mediaItem = new MediaItem.Builder().setUri(videoUrl).setClippingConfiguration(new MediaItem.ClippingConfiguration.Builder().setStartPositionMs(startMs).setEndPositionMs(endMs).build()).build();
 
         this.shortThumbVideo = mediaItem;
     }
@@ -161,6 +159,26 @@ public class Song {
         }
 
         return maxImageUrl;
+    }
+
+    public void checkIfFacvorite(LoveSongRespository.FavoriteCheckCallback callback) {
+        Log.d(tag, "đang check facvorite");
+        LoveSongRespository loveSongRespository = new LoveSongRespository();
+        loveSongRespository.isFavorite(this, callback);
+    }
+
+    public void addfacvorite(Runnable onComplete) {
+        LoveSongRespository loveSongRespository = new LoveSongRespository();
+        loveSongRespository.addFavorite(this, success -> {
+            if (success && onComplete != null) onComplete.run();
+        });
+    }
+
+    public void removefacvorite(Runnable onComplete) {
+        LoveSongRespository loveSongRespository = new LoveSongRespository();
+        loveSongRespository.removeFavorite(this, success -> {
+            if (success && onComplete != null) onComplete.run();
+        });
     }
 
 
@@ -224,7 +242,7 @@ public class Song {
         public Builder channelInfo(ChannelInfo channelInfo) {
             this.channelInfo = channelInfo;
             return this;
-        } // ✅
+        }
 
         public Song build() {
             return new Song(this);

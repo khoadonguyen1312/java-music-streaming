@@ -14,8 +14,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.khoadonguyen.java_music_streaming.Model.Song;
 
 public class LoveSongRespository {
+    private static String tag = "LoveSongRespository";
     private static final String FAVORITE_NODE = "favorite";
-    private static String tag = "RealtimeDbHelper";
+
     private DatabaseReference firebaseDatabase;
     private String user_id;
 
@@ -27,45 +28,50 @@ public class LoveSongRespository {
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
+            Log.d(tag, "user_id is auth" + currentUser.getUid());
             user_id = currentUser.getUid();
         } else {
             user_id = null;
         }
     }
 
-    public void addFavorite(Song song) {
+    public void addFavorite(Song song, SimpleCallback callback) {
         if (user_id == null) {
             Log.e(tag, "User chưa đăng nhập");
+            if (callback != null) callback.onComplete(false);
             return;
         }
 
-        try {
-            firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(song.getId()).setValue(song)
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(tag, "Thêm bài hát yêu thích thành công");
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(tag, "Lỗi khi thêm bài hát yêu thích: " + e.getMessage());
-                    });
-
-        } catch (Exception e) {
-            Log.e(tag, "Exception khi thêm favorite: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
+        firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(song.getId()).setValue(song.getUrl())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(tag, "Thêm bài hát yêu thích thành công");
+                    if (callback != null) callback.onComplete(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(tag, "Lỗi khi thêm bài hát yêu thích: " + e.getMessage());
+                    if (callback != null) callback.onComplete(false);
+                });
     }
 
-    public void removeFavorite(Song song) {
+    public interface SimpleCallback {
+        void onComplete(boolean success);
+    }
+
+    public void removeFavorite(Song song, SimpleCallback callback) {
         if (user_id == null) {
             Log.e(tag, "User chưa đăng nhập");
+            if (callback != null) callback.onComplete(false);
             return;
         }
 
         firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(song.getId()).removeValue()
                 .addOnSuccessListener(aVoid -> {
                     Log.d(tag, "Xóa bài hát yêu thích thành công");
+                    if (callback != null) callback.onComplete(true);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(tag, "Lỗi khi xóa bài hát yêu thích: " + e.getMessage());
+                    if (callback != null) callback.onComplete(false);
                 });
     }
 
@@ -81,6 +87,7 @@ public class LoveSongRespository {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         boolean exists = snapshot.exists();
+                        Log.d(tag, String.valueOf(exists));
                         callback.onResult(exists);
                     }
 
@@ -90,6 +97,8 @@ public class LoveSongRespository {
                         callback.onResult(false);
                     }
                 });
+
+
     }
 
 
@@ -105,6 +114,7 @@ public class LoveSongRespository {
         }
 
         firebaseDatabase.child(user_id).child(FAVORITE_NODE)
+                .limitToFirst(10)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

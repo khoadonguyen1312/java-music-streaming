@@ -122,42 +122,32 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:paddingHorizontal="28dp"
                     android:paddingTop="24dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
-
                             android:id="@+id/title_two"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Nơi này có anh"
                             android:textColor="@android:color/white"
-                            android:textFontWeight="@integer/material_motion_duration_medium_1"
-                            android:textSize="18dp"></TextView>
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/author_label"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Sơn tùng mtp"
-                            android:textColor="@android:color/white"></TextView>
+                            android:textColor="@android:color/white" />
                     </LinearLayout>
 
-                    <ImageButton
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="12dp"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/more_vert_24dp_e3e3e3_fill0_wght400_grad0_opsz24"></ImageButton>
 
                 </LinearLayout>
 
@@ -291,7 +281,7 @@
                         android:layout_weight="1"></View>
 
                     <ImageButton
-                        android:id="@+id/timmer"
+                        android:id="@+id/like"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:background="?attr/selectableItemBackground"
@@ -299,7 +289,8 @@
                         android:focusable="true"
                         android:padding="12dp"
                         android:scaleType="fitXY"
-                        android:src="@drawable/media3_icon_closed_captions"></ImageButton>
+                        android:src="@drawable/hear_not_fill"
+                        android:tint="@android:color/white"></ImageButton>
 
                 </LinearLayout>
 

@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 public class DynamicYoutubeExtractor implements Extractor {
     final static String tag = "DynamicYoutubeExtractor";
+    private static YoutubeService youtubeService;
 
     @Override
     public CompletableFuture<Song> gsong(String url) {
@@ -51,6 +52,8 @@ public class DynamicYoutubeExtractor implements Extractor {
 
                     Log.d(tag, "lấy thành công streamExtractor cho video có url :" + url);
                     Song song = new Song.Builder()
+                            .id(streamInfo.getId())
+                            .url(streamInfo.getUrl())
                             .duration(Duration.ofSeconds(streamInfo.getDuration()))
                             .subtitlesStreams(streamInfo.getSubtitles())
                             .author(streamInfo.getSubChannelName())
@@ -134,15 +137,19 @@ public class DynamicYoutubeExtractor implements Extractor {
 
     @Override
     public YoutubeService initService() {
-        try {
-
-
-            YoutubeService youtubeService = (YoutubeService) NewPipe.getService(0);
-            Log.d(tag, "khởi tạo thành công youtube service");
-            return youtubeService;
-        } catch (ExtractionException e) {
-            throw new RuntimeException(e);
+        if (youtubeService == null) {
+            synchronized (DynamicYoutubeExtractor.class) {
+                if (youtubeService == null) {
+                    try {
+                        youtubeService = (YoutubeService) NewPipe.getService(0);
+                        Log.d(tag, "khởi tạo thành công youtube service");
+                    } catch (ExtractionException e) {
+                        throw new RuntimeException("Không thể khởi tạo YoutubeService", e);
+                    }
+                }
+            }
         }
+        return youtubeService;
     }
 
     @Override
@@ -194,37 +201,6 @@ public class DynamicYoutubeExtractor implements Extractor {
         });
     }
 
-    public CompletableFuture<List<Song>> createPlaylistFromQueries(List<String> queries) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<CompletableFuture<List<Song>>> futureList = new ArrayList<>();
-
-
-            for (String query : queries) {
-                futureList.add(search(query));
-            }
-
-
-            CompletableFuture<Void> allFutures = CompletableFuture.allOf(
-                    futureList.toArray(new CompletableFuture[0])
-            );
-
-            try {
-                allFutures.get();
-
-
-                List<Song> allSongs = futureList.stream()
-                        .flatMap(future -> future.join().stream())
-                        .distinct()
-                        .collect(Collectors.toList());
-
-
-                return allSongs.stream().limit(50).collect(Collectors.toList());
-
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException("Lỗi khi tạo playlist từ queries", e);
-            }
-        });
-    }
 
     public CompletableFuture<List<Song>> searchOffice(String query) {
         return CompletableFuture.supplyAsync(() -> {

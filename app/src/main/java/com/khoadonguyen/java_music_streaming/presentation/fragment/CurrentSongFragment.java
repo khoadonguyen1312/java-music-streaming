@@ -3,6 +3,8 @@ package com.khoadonguyen.java_music_streaming.presentation.fragment;
 import static androidx.media3.common.Player.REPEAT_MODE_ONE;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
 import com.khoadonguyen.java_music_streaming.Service.Playlist.Playlist;
 import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
+import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
 import com.khoadonguyen.java_music_streaming.presentation.bottomSheet.CurrentSongMoreBottomSheet;
 import com.khoadonguyen.java_music_streaming.presentation.core.CurrentSongFragmentBottomSheet;
@@ -38,10 +41,11 @@ import com.khoadonguyen.java_music_streaming.presentation.core.CurrentSongFragme
 import java.time.Duration;
 
 public class CurrentSongFragment extends Fragment {
+    private static String tag = "CurrentSongFragment";
     MaterialToolbar materialToolbar;
+    private Handler handler = new Handler(Looper.getMainLooper());
     ImageView thumb;
-    ImageButton play_pause, playlist, skip_next, skip_back, loop, more,
-            back_screen;
+    ImageButton play_pause, playlist, skip_next, skip_back, loop, more, back_screen, like;
     Slider slider;
     TextView current_duration;
     TextView max_duration;
@@ -66,19 +70,13 @@ public class CurrentSongFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setview();
+        setview(view);
         exoPlayer = new ExoPlayer.Builder(requireContext()).build();
         exoPlayer.setRepeatMode(REPEAT_MODE_ONE);
         /**
          * set khong focus chiem dung quyen am thanh
          */
-        exoPlayer.setAudioAttributes(
-                new AudioAttributes.Builder()
-                        .setUsage(C.USAGE_MEDIA)
-                        .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
-                        .build(),
-                false
-        );
+        exoPlayer.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), false);
         /**
          *
          */
@@ -92,13 +90,13 @@ public class CurrentSongFragment extends Fragment {
 
     private void handle_btn() {
 
-        more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CurrentSongMoreBottomSheet currentSongFragmentBottomSheet = new CurrentSongMoreBottomSheet();
-                currentSongFragmentBottomSheet.show(getFragmentManager(), currentSongFragmentBottomSheet.getTag());
-            }
-        });
+//        more.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                CurrentSongMoreBottomSheet currentSongFragmentBottomSheet = new CurrentSongMoreBottomSheet();
+//                currentSongFragmentBottomSheet.show(getFragmentManager(), currentSongFragmentBottomSheet.getTag());
+//            }
+//        });
         back_screen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,9 +158,7 @@ public class CurrentSongFragment extends Fragment {
                 slider.setValue(0f);
 
 
-                Duration maxDuration = AudioPlayerManager.getAudioService()
-                        .getMax_pos()
-                        .getValue();
+                Duration maxDuration = AudioPlayerManager.getAudioService().getMax_pos().getValue();
 
 
                 float maxMs = (float) maxDuration.toMillis();
@@ -173,6 +169,7 @@ public class CurrentSongFragment extends Fragment {
 
 
                 title.setText(songTitle);
+                loveSongView(song);
 
 
             }
@@ -200,7 +197,16 @@ public class CurrentSongFragment extends Fragment {
             @Override
             public void onChanged(Duration duration) {
                 current_duration.setText(DateUtils.formatElapsedTime(duration.getSeconds()));
-                slider.setValue(duration.toMillis());
+
+                float currentMs = duration.toMillis();
+                float maxMs = slider.getValueTo();
+
+                if (currentMs > maxMs) {
+
+                    slider.setValue(maxMs);
+                } else {
+                    slider.setValue(currentMs);
+                }
             }
         });
 
@@ -216,20 +222,46 @@ public class CurrentSongFragment extends Fragment {
         super.onDestroy();
     }
 
-    private void setview() {
-        more = getView().findViewById(R.id.more_btn);
-        video_background = getView().findViewById(R.id.video_background);
-        back_screen = getView().findViewById(R.id.back_screen);
-        play_pause = getView().findViewById(R.id.play_pause);
-        skip_back = getView().findViewById(R.id.back_song);
-        skip_next = getView().findViewById(R.id.next_song);
-        loop = getView().findViewById(R.id.loop);
-        title = getView().findViewById(R.id.title_two);
-        slider = getView().findViewById(R.id.slider);
-        current_duration = getView().findViewById(R.id.current_time);
-        max_duration = getView().findViewById(R.id.max_time);
+    private void loveSongView(Song song) {
+        int liked_icon = R.drawable.heart_fill;
+        int unlike_icon = R.drawable.hear_not_fill;
+
+        song.checkIfFacvorite(isFavorite -> {
+            Log.d(tag, "isFavorite = " + isFavorite);
+
+            // Đặt icon tương ứng
+            like.setImageResource(isFavorite ? liked_icon : unlike_icon);
+
+
+            like.setOnClickListener(v -> {
+                if (isFavorite) {
+                    Log.d("CurrentSong", "Removing from favorite...");
+                    song.removefacvorite(() -> loveSongView(song));
+                } else {
+                    Log.d("CurrentSong", "Adding to favorite...");
+                    song.addfacvorite(() -> loveSongView(song));
+                }
+            });
+        });
+
 
     }
 
+
+    private void setview(View view) {
+        more = view.findViewById(R.id.more_btn);
+
+        video_background = view.findViewById(R.id.video_background);
+        back_screen = view.findViewById(R.id.back_screen);
+        play_pause = view.findViewById(R.id.play_pause);
+        skip_back = view.findViewById(R.id.back_song);
+        skip_next = view.findViewById(R.id.next_song);
+        loop = view.findViewById(R.id.loop);
+        title = view.findViewById(R.id.title_two);
+        slider = view.findViewById(R.id.slider);
+        current_duration = view.findViewById(R.id.current_time);
+        max_duration = view.findViewById(R.id.max_time);
+        like = view.findViewById(R.id.like);
+    }
 
 }

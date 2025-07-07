@@ -1,6 +1,9 @@
 package com.khoadonguyen.java_music_streaming.presentation.fragment;
 
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
@@ -22,23 +25,31 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.bumptech.glide.Glide;
 import com.khoadonguyen.java_music_streaming.Model.Song;
+import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.R;
 
 import com.khoadonguyen.java_music_streaming.Service.Auth.User;
+import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
 import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
 import com.khoadonguyen.java_music_streaming.Util.RandomSlug;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.ContinuteAdapter;
+import com.khoadonguyen.java_music_streaming.presentation.Adapter.ContinuteAdapterLoading;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.RecomandAdapter;
+import com.khoadonguyen.java_music_streaming.presentation.Adapter.RecomendAdapterLoading;
 import com.khoadonguyen.java_music_streaming.presentation.core.BottomSheet;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,13 +63,16 @@ public class HomeFragment extends Fragment {
     Button test;
     RecyclerView continute_recyclerView, listview2, listview3, listview4;
 
+    private List<Song> recomend_caches = new ArrayList<>();
+
+    private List<Song> history_caches = null;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
         source_textview = view.findViewById(R.id.source_textview);
-        recomand_girdView = view.findViewById(R.id.home_fragment_recomand_girdview);
+
 
         playlist_button = view.findViewById(R.id.home_fragment_playlist_button);
         sourceChange();
@@ -79,7 +93,8 @@ public class HomeFragment extends Fragment {
         });
 
         userInfo();
-
+        recomandView();
+        continuteview();
     }
 
 
@@ -99,70 +114,68 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void recomanSong() {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                List<Song> songs = new DynamicYoutubeExtractor().search("remix tiktok").join();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isAdded()) {
-                            Context context = requireContext();
-                            RecomandAdapter adapter = new RecomandAdapter(context, songs.subList(0, 6));
-                            recomand_girdView.setAdapter(adapter);
+    private void recomandView() {
+        View root = getView();
+        if (root == null || !isAdded()) return;
+
+        RecyclerView loadingView = root.findViewById(R.id.recomand_loading);
+        RecyclerView doneView = root.findViewById(R.id.recomand_done);
+
+        // Khởi tạo layout manager riêng cho từng RecyclerView
+        loadingView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        loadingView.setAdapter(new RecomendAdapterLoading(6));
+
+        // Hiện loading, ẩn dữ liệu ban đầu
+        loadingView.setVisibility(View.VISIBLE);
+        doneView.setVisibility(View.GONE);
+
+        // Nếu đã có cache thì hiển thị luôn
+        if (recomend_caches != null && !recomend_caches.isEmpty()) {
+            doneView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+            doneView.setAdapter(new RecomandAdapter(requireContext(), recomend_caches.subList(0, 6)));
+            loadingView.setVisibility(View.GONE);
+            doneView.setVisibility(View.VISIBLE);
+            return;
+        }
 
 
-                        }
-                    }
-                });
-            }
+        executorService.execute(() -> {
+
+
+            List<Song> songs = SourceExtractor.getInstance()
+                    .gExtractor(requireContext())
+                    .search("lana del rey")
+                    .join();
+
+            handler.post(() -> {
+
+                if (!isAdded() || getView() == null) return;
+
+                // Cập nhật cache
+                if (recomend_caches == null) {
+                    recomend_caches = new ArrayList<>();
+                } else {
+                    recomend_caches.clear();
+                }
+                recomend_caches.addAll(songs);
+
+                // Cập nhật giao diện
+                doneView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+                doneView.setAdapter(new RecomandAdapter(requireContext(), recomend_caches.subList(0, 6)));
+                loadingView.setVisibility(View.GONE);
+                doneView.setVisibility(View.VISIBLE);
+            });
         });
     }
 
 
-    private void continuteView() {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
+    private void continuteview() {
+        RecyclerView loading = getView().findViewById(R.id.continute_listview_loading);
+        ContinuteAdapterLoading continuteAdapterLoading = new ContinuteAdapterLoading(10);
+        loading.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
-                List<Song> songs = new DynamicYoutubeExtractor().search(RandomSlug.gSlugs()).join();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isAdded()) {
-                            Context context = requireContext();
-                            ContinuteAdapter continuteAdapter = new ContinuteAdapter(context, songs);
-                            continute_recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true));
-                            continute_recyclerView.setAdapter(continuteAdapter);
-                        }
-                    }
-                });
-            }
-        });
+        loading.setAdapter(continuteAdapterLoading);
     }
-
-    private void handlelistview2() {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-
-                List<Song> songs = new DynamicYoutubeExtractor().search(RandomSlug.gSlugs()).join();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isAdded()) {
-                            Context context = requireContext();
-                            ContinuteAdapter continuteAdapter = new ContinuteAdapter(context, songs);
-                            listview2.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, true));
-                            listview2.setAdapter(continuteAdapter);
-                        }
-                    }
-                });
-            }
-        });
-    }
-
 
     private void userInfo() {
         ImageView avt = getView().findViewById(R.id.home_fragment_avt);
