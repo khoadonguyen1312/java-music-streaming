@@ -182,10 +182,7 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new SearchFragment());
                 return true;
             }
-            if (item.getItemId() == R.id.item_3) {
-                replaceFragment(new FolderFragment());
-                return true;
-            }
+
             if (item.getItemId() == R.id.item_4) {
                 replaceFragment(new UserFragment());
                 return true;

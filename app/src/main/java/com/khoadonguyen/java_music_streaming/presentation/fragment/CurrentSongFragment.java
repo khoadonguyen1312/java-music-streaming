@@ -31,6 +31,7 @@ import com.google.android.material.slider.Slider;
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
 import com.khoadonguyen.java_music_streaming.Service.Playlist.Playlist;
+import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
 import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
 import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
@@ -145,12 +146,16 @@ public class CurrentSongFragment extends Fragment {
                 Song song = songs.get(songs.gIndex());
                 String songTitle = song.getTitle();
 
-                MediaItem previewClip = song.getShortThumbVideo();
+                int source_id = SourceExtractor.getInstance().getCurrent_source_id();
+                if (source_id == 0) {
+                    MediaItem previewClip = song.getShortThumbVideo();
 
-                exoPlayer.setMediaItem(previewClip);
-                exoPlayer.prepare();
-                exoPlayer.play();
-
+                    exoPlayer.setMediaItem(previewClip);
+                    exoPlayer.prepare();
+                    exoPlayer.play();
+                } else {
+                    Glide.with(requireContext()).load(song.gHighImage()).into(thumb);
+                }
                 /**
                  * set view
                  */
@@ -229,7 +234,7 @@ public class CurrentSongFragment extends Fragment {
         song.checkIfFacvorite(isFavorite -> {
             Log.d(tag, "isFavorite = " + isFavorite);
 
-            // Đặt icon tương ứng
+
             like.setImageResource(isFavorite ? liked_icon : unlike_icon);
 
 

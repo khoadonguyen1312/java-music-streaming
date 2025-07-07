@@ -16,6 +16,7 @@ import org.schabi.newpipe.extractor.search.SearchExtractor;
 import org.schabi.newpipe.extractor.services.soundcloud.SoundcloudService;
 
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
+import org.schabi.newpipe.extractor.stream.StreamInfo;
 
 import java.io.IOException;
 
@@ -23,9 +24,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class DynamicSoundCloudExtractor implements Extractor {
     static final String tag = "DynamicSoundCloudExtractor";
+    private SoundcloudService soundcloudService;
 
     @Override
     public CompletableFuture<Song> gsong(String url) {
@@ -36,16 +39,9 @@ public class DynamicSoundCloudExtractor implements Extractor {
                 StreamExtractor streamExtractor = soundcloudService.getStreamExtractor(url);
                 if (streamExtractor != null) {
                     streamExtractor.fetchPage();
-                    Song song = new Song.Builder().id(streamExtractor.getId())
-                            .url(streamExtractor.getUrl())
-                            .audioLink(streamExtractor.getAudioStreams())
-                            .subtitlesStreams(streamExtractor.getSubtitles(MediaFormat.VTT))
-                            .title(streamExtractor.getName())
-                            .images(streamExtractor.getThumbnails())
-                            .source(Source.YOUTUBE)
-                            .build();
+                    Song song = new Song.Builder().author(streamExtractor.getSubChannelName()).id(streamExtractor.getId()).url(streamExtractor.getUrl()).subtitlesStreams(null).audioLink(streamExtractor.getAudioStreams()).subtitlesStreams(streamExtractor.getSubtitles(MediaFormat.VTT)).title(streamExtractor.getName()).images(streamExtractor.getThumbnails()).source(Source.YOUTUBE).build();
 
-                
+
                     Log.d(tag, "lấy thành công bài hát từ soundcloud có url :" + url);
 
                     return song;
@@ -75,13 +71,7 @@ public class DynamicSoundCloudExtractor implements Extractor {
                     searchExtractor.fetchPage();
                     List<InfoItem> infoItems = searchExtractor.getInitialPage().getItems();
                     for (var infoitem : infoItems) {
-                        songs.add(new Song.Builder()
-                                .title(infoitem.getName())
-                                .images(infoitem.getThumbnails())
-                                .url(infoitem.getUrl())
-                                .source(Source.SOUNDCLOUD)
-                                .build()
-                        );
+                        songs.add(new Song.Builder().title(infoitem.getName()).images(infoitem.getThumbnails()).url(infoitem.getUrl()).source(Source.SOUNDCLOUD).build());
                     }
                     return songs;
                 }
@@ -105,25 +95,51 @@ public class DynamicSoundCloudExtractor implements Extractor {
 
     @Override
     public SoundcloudService initService() {
-        try {
-            Downloader downloader = new DynamicDownloader();
-            NewPipe.init(downloader);
-
-            SoundcloudService soundcloudService = (SoundcloudService) NewPipe.getService(1);
-            Log.d(tag, "Khởi tạo thành công soundcloud service");
-
-            return soundcloudService;
-
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        } catch (ExtractionException e) {
-            throw new RuntimeException(e);
+        if (soundcloudService == null) {
+            synchronized (DynamicSoundCloudExtractor.class) {
+                if (soundcloudService == null) {
+                    try {
+                        soundcloudService = (SoundcloudService) NewPipe.getService(1);
+                        Log.d(tag, "khởi tạo thành công soundcloud service");
+                    } catch (ExtractionException e) {
+                        throw new RuntimeException("Không thể tạo SoundCloud Service", e);
+                    }
+                }
+            }
         }
+        return soundcloudService;
 
     }
 
     @Override
     public CompletableFuture<List<Song>> recomandSong(Song song) {
-        return null;
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Log.d(tag, "đang lấy video recomend cho video có title :" + song.getTitle());
+                List<CompletableFuture<Song>> completableFutureList = new ArrayList<>();
+                StreamInfo streamInfo = StreamInfo.getInfo(song.getUrl());
+                if (streamInfo != null) {
+                    List<InfoItem> infoItems = streamInfo.getRelatedItems();
+                    for (var infoitem : infoItems) {
+                        completableFutureList.add(gsong(infoitem.getUrl()));
+                    }
+                    CompletableFuture<Void> completableFuture = CompletableFuture.allOf(completableFutureList.toArray(new CompletableFuture[0]));
+                    List<Song> songs = completableFuture.thenApply(v -> completableFutureList.stream().map(CompletableFuture::join).collect(Collectors.toList())
+
+                    ).get();
+                    List<Song> results = songs.stream().filter(s -> s.getDuration().toMinutes() < 60).collect(Collectors.toList());
+                    return results;
+
+                } else {
+
+                    Log.e(tag, "Lấy Không thành công recomend video cho video có tên " + song.getTitle());
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            return null;
+        });
     }
 }

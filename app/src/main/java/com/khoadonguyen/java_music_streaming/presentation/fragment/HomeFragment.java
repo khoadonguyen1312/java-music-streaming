@@ -81,17 +81,22 @@ public class HomeFragment extends Fragment {
         playlist_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Animator scale = ObjectAnimator.ofPropertyValuesHolder(v,
-                        PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1.5f, 1),
-                        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 1.5f, 1)
-                );
+                Animator scale = ObjectAnimator.ofPropertyValuesHolder(v, PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1.5f, 1), PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 1.5f, 1));
                 scale.setDuration(1000);
                 scale.start();
                 ChangeScreen.changeScreen(getActivity(), new CurrentPlaylist(), R.anim.slide_in_up, 0, 0, R.anim.slide_in_down);
 
             }
         });
+        int source_id = SourceExtractor.getInstance().getCurrent_source_id();
+        if (source_id == 0) {
+            source_textview.setText("Youtube");
+            source_textview.setTextColor(0xffE14434);
 
+        } else {
+            source_textview.setText("SoundCloud");
+            source_textview.setTextColor(0xffF68537);
+        }
         userInfo();
         recomandView();
         continuteview();
@@ -108,8 +113,9 @@ public class HomeFragment extends Fragment {
         source_textview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BottomSheet bottomSheet = new BottomSheet();
+                BottomSheet bottomSheet = new BottomSheet(requireContext());
                 bottomSheet.show(getActivity().getSupportFragmentManager(), bottomSheet.getTag());
+
             }
         });
     }
@@ -121,15 +127,14 @@ public class HomeFragment extends Fragment {
         RecyclerView loadingView = root.findViewById(R.id.recomand_loading);
         RecyclerView doneView = root.findViewById(R.id.recomand_done);
 
-        // Khởi tạo layout manager riêng cho từng RecyclerView
         loadingView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         loadingView.setAdapter(new RecomendAdapterLoading(6));
 
-        // Hiện loading, ẩn dữ liệu ban đầu
+
         loadingView.setVisibility(View.VISIBLE);
         doneView.setVisibility(View.GONE);
 
-        // Nếu đã có cache thì hiển thị luôn
+
         if (recomend_caches != null && !recomend_caches.isEmpty()) {
             doneView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
             doneView.setAdapter(new RecomandAdapter(requireContext(), recomend_caches.subList(0, 6)));
@@ -142,10 +147,7 @@ public class HomeFragment extends Fragment {
         executorService.execute(() -> {
 
 
-            List<Song> songs = SourceExtractor.getInstance()
-                    .gExtractor(requireContext())
-                    .search("lana del rey")
-                    .join();
+            List<Song> songs = SourceExtractor.getInstance().gExtractor(requireContext()).search("lana del rey").join();
 
             handler.post(() -> {
 
@@ -159,7 +161,6 @@ public class HomeFragment extends Fragment {
                 }
                 recomend_caches.addAll(songs);
 
-                // Cập nhật giao diện
                 doneView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
                 doneView.setAdapter(new RecomandAdapter(requireContext(), recomend_caches.subList(0, 6)));
                 loadingView.setVisibility(View.GONE);
