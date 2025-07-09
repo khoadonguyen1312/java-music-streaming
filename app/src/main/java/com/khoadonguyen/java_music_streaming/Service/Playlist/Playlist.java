@@ -19,15 +19,15 @@ public class Playlist extends ArrayList<Song> {
         Log.d(tag, "clear playlist thành công");
     }
 
-  public   void next() {
+    public void next() {
 
-        if (index < this.size()-1) {
+        if (index < this.size() - 1) {
             index++;
             Log.d(tag, "current index playlist :" + index);
         }
     }
 
-   public void back() {
+    public void back() {
 
         if (index > 0 && index < this.size()) {
             index--;
@@ -35,13 +35,18 @@ public class Playlist extends ArrayList<Song> {
         }
     }
 
-  public   Song gCurrentSong() {
+    public Song gCurrentSong() {
         Song song = this.get(index);
         Log.d(tag, "playlist trả về bài hát có title :" + song.getTitle());
         return song;
     }
-    public int gIndex(){
+
+    public int gIndex() {
         return index;
     }
 
+    public void seektoIndex(int index) {
+        this.index = index;
+        Log.d(tag, "seek tới vị trí :" + index);
+    }
 }

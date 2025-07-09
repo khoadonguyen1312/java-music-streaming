@@ -83,6 +83,9 @@ dependencies {
 // skeleton animation
 // https://mvnrepository.com/artifact/com.facebook.shimmer/shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+// amdroid palette
+    // https://mvnrepository.com/artifact/androidx.palette/palette
+    implementation("androidx.palette:palette:1.0.0-alpha1")
 
 }
 apply(plugin = "com.google.gms.google-services")

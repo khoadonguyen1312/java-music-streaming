@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ import com.khoadonguyen.java_music_streaming.R;
 import com.khoadonguyen.java_music_streaming.Service.Auth.User;
 import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
 import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
+import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
 import com.khoadonguyen.java_music_streaming.Util.RandomSlug;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.ContinuteAdapter;
@@ -64,6 +66,7 @@ public class HomeFragment extends Fragment {
     RecyclerView continute_recyclerView, listview2, listview3, listview4;
 
     private List<Song> recomend_caches = new ArrayList<>();
+    private static String tag = "HomeFragment";
 
     private List<Song> history_caches = null;
 
@@ -81,26 +84,33 @@ public class HomeFragment extends Fragment {
         playlist_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Animator scale = ObjectAnimator.ofPropertyValuesHolder(v,
-                        PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1.5f, 1),
-                        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 1.5f, 1)
-                );
+                Animator scale = ObjectAnimator.ofPropertyValuesHolder(v, PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1.5f, 1), PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 1.5f, 1));
                 scale.setDuration(1000);
                 scale.start();
                 ChangeScreen.changeScreen(getActivity(), new CurrentPlaylist(), R.anim.slide_in_up, 0, 0, R.anim.slide_in_down);
 
             }
         });
+        int source_id = SourceExtractor.getInstance().getCurrent_source_id();
+        if (source_id == 0) {
+            source_textview.setText("Youtube");
+            source_textview.setTextColor(0xffE14434);
 
+        } else {
+            source_textview.setText("SoundCloud");
+            source_textview.setTextColor(0xffF68537);
+        }
         userInfo();
         recomandView();
         continuteview();
+        history();
     }
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.home_fragement, container, false);
     }
 
@@ -108,8 +118,9 @@ public class HomeFragment extends Fragment {
         source_textview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BottomSheet bottomSheet = new BottomSheet();
+                BottomSheet bottomSheet = new BottomSheet(requireContext());
                 bottomSheet.show(getActivity().getSupportFragmentManager(), bottomSheet.getTag());
+
             }
         });
     }
@@ -121,15 +132,14 @@ public class HomeFragment extends Fragment {
         RecyclerView loadingView = root.findViewById(R.id.recomand_loading);
         RecyclerView doneView = root.findViewById(R.id.recomand_done);
 
-        // Khởi tạo layout manager riêng cho từng RecyclerView
         loadingView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         loadingView.setAdapter(new RecomendAdapterLoading(6));
 
-        // Hiện loading, ẩn dữ liệu ban đầu
+
         loadingView.setVisibility(View.VISIBLE);
         doneView.setVisibility(View.GONE);
 
-        // Nếu đã có cache thì hiển thị luôn
+
         if (recomend_caches != null && !recomend_caches.isEmpty()) {
             doneView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
             doneView.setAdapter(new RecomandAdapter(requireContext(), recomend_caches.subList(0, 6)));
@@ -142,10 +152,7 @@ public class HomeFragment extends Fragment {
         executorService.execute(() -> {
 
 
-            List<Song> songs = SourceExtractor.getInstance()
-                    .gExtractor(requireContext())
-                    .search("lana del rey")
-                    .join();
+            List<Song> songs = SourceExtractor.getInstance().gExtractor(requireContext()).search("lana del rey").join();
 
             handler.post(() -> {
 
@@ -159,7 +166,6 @@ public class HomeFragment extends Fragment {
                 }
                 recomend_caches.addAll(songs);
 
-                // Cập nhật giao diện
                 doneView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
                 doneView.setAdapter(new RecomandAdapter(requireContext(), recomend_caches.subList(0, 6)));
                 loadingView.setVisibility(View.GONE);
@@ -170,11 +176,7 @@ public class HomeFragment extends Fragment {
 
 
     private void continuteview() {
-        RecyclerView loading = getView().findViewById(R.id.continute_listview_loading);
-        ContinuteAdapterLoading continuteAdapterLoading = new ContinuteAdapterLoading(10);
-        loading.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        loading.setAdapter(continuteAdapterLoading);
     }
 
     private void userInfo() {
@@ -183,5 +185,40 @@ public class HomeFragment extends Fragment {
         String avt_result = new User().getAvt();
         Glide.with(requireContext()).load(avt_result).into(avt);
         email.setText(new User().getEmail());
+    }
+
+    private void history() {
+//        RecyclerView loading = getView().findViewById(R.id.continute_listview_loading);
+//        ContinuteAdapterLoading continuteAdapterLoading = new ContinuteAdapterLoading(10);
+//        loading.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+//
+//        loading.setAdapter(continuteAdapterLoading);
+//
+//        executorService.execute(() -> {
+//
+//            LoveSongRespository loveSongRespository = new LoveSongRespository();
+//            loveSongRespository.getAllFavorites(snapshot -> {
+//                if (snapshot.exists()) {
+//                    List<String> ids = new ArrayList<>();
+//                    for (var datasnapshot : snapshot.getChildren()) {
+//                        String url = datasnapshot.getValue(String.class);
+//                        if (url != null) {
+//                            ids.add(url);
+//                            Log.d(tag, url);
+//                        }
+//                    }
+//                    List<Song> songs = SourceExtractor.getInstance().gExtractor(requireContext()).gsong(ids);
+//                    handler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                         ContinuteAdapter continuteAdapter =new ContinuteAdapter(requireContext(),songs);
+//
+//                        }
+//                    });
+//                }
+//
+//            });
+//
+//        });
     }
 }

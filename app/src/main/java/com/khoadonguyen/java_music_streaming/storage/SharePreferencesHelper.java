@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 public class SharePreferencesHelper {
-    private static String prefname = "MusicStorage";
+     static String prefname = "MusicStorage";
     private static final String logTag = "SharePreferencesHelper";
 
     /**

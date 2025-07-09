@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -19,6 +18,11 @@ import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
 public class BottomSheet extends BottomSheetDialogFragment {
     public static final String TAG = "ModalBottomSheet";
     RadioGroup radioGroup;
+    private Context context;
+
+    public BottomSheet(Context context) {
+        this.context = context;
+    }
 
     RadioButton youtube_radio_button;
     RadioButton soundclound_radio_button;
@@ -57,6 +61,7 @@ public class BottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 SourceExtractor.getInstance().changeSource(getContext());
+
             }
         });
     }

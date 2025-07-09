@@ -88,48 +88,18 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="6dp"
-                    android:text="Music"
-                    android:textSize="19dp"></TextView>
 
-                <LinearLayout
+                <Button
+                    android:id="@+id/sign_out"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:paddingVertical="6dp">
+                    android:layout_height="48dp"
+                    android:layout_margin="16dp"
+                    android:backgroundTint="#E14434"
+                    android:text="Sign out"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/language_24dp_e3e3e3_fill0_wght400_grad0_opsz24"></ImageView>
-
-                    <View
-                        android:layout_width="12dp"
-                        android:layout_height="0dp"></View>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Language"
-                        android:textSize="12dp"></TextView>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-
-
-                    </View>
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/arrow_forward_ios_24dp_e3e3e3_fill0_wght400_grad0_opsz24"></ImageView>
-                </LinearLayout>
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>

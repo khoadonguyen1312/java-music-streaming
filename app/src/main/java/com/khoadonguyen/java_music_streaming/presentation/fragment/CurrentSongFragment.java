@@ -31,10 +31,12 @@ import com.google.android.material.slider.Slider;
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
 import com.khoadonguyen.java_music_streaming.Service.Playlist.Playlist;
+import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
 import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
 import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
 import com.khoadonguyen.java_music_streaming.presentation.bottomSheet.CurrentSongMoreBottomSheet;
+import com.khoadonguyen.java_music_streaming.presentation.bottomSheet.Output_speaker_bottomsheet;
 import com.khoadonguyen.java_music_streaming.presentation.core.CurrentSongFragmentBottomSheet;
 
 
@@ -45,7 +47,7 @@ public class CurrentSongFragment extends Fragment {
     MaterialToolbar materialToolbar;
     private Handler handler = new Handler(Looper.getMainLooper());
     ImageView thumb;
-    ImageButton play_pause, playlist, skip_next, skip_back, loop, more, back_screen, like;
+    ImageButton play_pause, playlist, skip_next, skip_back, loop, more, back_screen, like, output_info;
     Slider slider;
     TextView current_duration;
     TextView max_duration;
@@ -135,7 +137,13 @@ public class CurrentSongFragment extends Fragment {
                 AudioPlayerManager.getAudioService().back();
             }
         });
-
+        output_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Output_speaker_bottomsheet outputSpeakerBottomsheet = new Output_speaker_bottomsheet();
+                outputSpeakerBottomsheet.show(getParentFragmentManager(), outputSpeakerBottomsheet.getTag());
+            }
+        });
     }
 
     private void handleUiListen() {
@@ -145,12 +153,16 @@ public class CurrentSongFragment extends Fragment {
                 Song song = songs.get(songs.gIndex());
                 String songTitle = song.getTitle();
 
-                MediaItem previewClip = song.getShortThumbVideo();
+                int source_id = SourceExtractor.getInstance().getCurrent_source_id();
+                if (source_id == 0) {
+                    MediaItem previewClip = song.getShortThumbVideo();
 
-                exoPlayer.setMediaItem(previewClip);
-                exoPlayer.prepare();
-                exoPlayer.play();
-
+                    exoPlayer.setMediaItem(previewClip);
+                    exoPlayer.prepare();
+                    exoPlayer.play();
+                } else {
+                    Glide.with(requireContext()).load(song.gHighImage()).into(thumb);
+                }
                 /**
                  * set view
                  */
@@ -187,6 +199,8 @@ public class CurrentSongFragment extends Fragment {
                 }
             }
         });
+
+
 //        AudioPlayerManager.getAudioService().getMax_pos().observe(getViewLifecycleOwner(), new Observer<Duration>() {
 //            @Override
 //            public void onChanged(Duration duration) {
@@ -229,7 +243,7 @@ public class CurrentSongFragment extends Fragment {
         song.checkIfFacvorite(isFavorite -> {
             Log.d(tag, "isFavorite = " + isFavorite);
 
-            // Đặt icon tương ứng
+
             like.setImageResource(isFavorite ? liked_icon : unlike_icon);
 
 
@@ -262,6 +276,8 @@ public class CurrentSongFragment extends Fragment {
         current_duration = view.findViewById(R.id.current_time);
         max_duration = view.findViewById(R.id.max_time);
         like = view.findViewById(R.id.like);
+        thumb = view.findViewById(R.id.thumb);
+        output_info = view.findViewById(R.id.device);
     }
 
 }

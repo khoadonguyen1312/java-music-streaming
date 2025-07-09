@@ -19,4 +19,6 @@ public interface DynamicAudioPlayer  {
  void seekTo(Duration duration);
 
 void playSong(Song song);
+
+void seekToSong(int index);
 }

@@ -1,7 +1,6 @@
 package com.khoadonguyen.java_music_streaming.presentation.Adapter;
 
 
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
+import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
 
 import java.util.List;
 
@@ -39,14 +39,19 @@ public class RecomandAdapter extends RecyclerView.Adapter<RecomandAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Song song = songs.get(position);
 
-        // Load ảnh bài hát
+
         Glide.with(context)
                 .load(song.gHighImage())
-                      // ảnh khi lỗi load (nếu có)
+
                 .into(holder.thumb);
 
-        // Set tiêu đề
         holder.title.setText(song.getTitle());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AudioPlayerManager.getAudioService().start(song);
+            }
+        });
     }
 
     @Override
