@@ -1,4 +1,4 @@
-package com.khoadonguyen.java_music_streaming.presentation.core;
+package com.khoadonguyen.java_music_streaming.presentation.bottomSheet;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.khoadonguyen.java_music_streaming.R;

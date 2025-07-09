@@ -1,19 +1,13 @@
 package com.khoadonguyen.java_music_streaming.presentation.fragment;
 
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.content.Context;
-import android.content.Intent;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,32 +21,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.bumptech.glide.Glide;
 import com.khoadonguyen.java_music_streaming.Model.Song;
-import com.khoadonguyen.java_music_streaming.Model.Source;
 import com.khoadonguyen.java_music_streaming.R;
 
 import com.khoadonguyen.java_music_streaming.Service.Auth.User;
 import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
-import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
-import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
-import com.khoadonguyen.java_music_streaming.Util.RandomSlug;
-import com.khoadonguyen.java_music_streaming.presentation.Adapter.ContinuteAdapter;
-import com.khoadonguyen.java_music_streaming.presentation.Adapter.ContinuteAdapterLoading;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.RecomandAdapter;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.RecomendAdapterLoading;
-import com.khoadonguyen.java_music_streaming.presentation.core.BottomSheet;
+import com.khoadonguyen.java_music_streaming.presentation.bottomSheet.BottomSheet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
