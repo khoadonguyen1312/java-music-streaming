@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-import com.khoadonguyen.java_music_streaming.Model.SearchGirdItem;
 import com.khoadonguyen.java_music_streaming.R;
 import com.khoadonguyen.java_music_streaming.Util.RandomColor;
 

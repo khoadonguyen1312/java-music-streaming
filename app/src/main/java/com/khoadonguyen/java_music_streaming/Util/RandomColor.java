@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class RandomColor {
 
-    // Khởi tạo danh sách màu 1 lần duy nhất
+
     private static final List<Integer> COLOR_LIST = Arrays.asList(
             0xFFFF5252, // Red
             0xFFFFC107, // Amber

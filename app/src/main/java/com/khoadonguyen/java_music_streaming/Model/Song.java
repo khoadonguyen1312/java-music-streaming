@@ -277,7 +277,7 @@ public class Song {
     public void loadDominantColor(Context context, OnColorLoadedCallback callback) {
         String imageUrl = gHighImage();
         if (imageUrl == null) {
-            callback.onColorReady("#888888"); // fallback màu xám
+            callback.onColorReady("#888888");
             return;
         }
 

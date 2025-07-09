@@ -1,15 +1,9 @@
 package com.khoadonguyen.java_music_streaming.presentation.fragment;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.search.SearchView;
-import com.khoadonguyen.java_music_streaming.Model.SearchGirdItem;
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
 import com.khoadonguyen.java_music_streaming.Service.AudioPlayer.impl.DynamicAudioPlayerImpl;
-import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicSoundCloudExtractor;
-import com.khoadonguyen.java_music_streaming.Service.extractor.impl.DynamicYoutubeExtractor;
 import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
-import com.khoadonguyen.java_music_streaming.presentation.Adapter.SearchFragmentGirdAdapter;
 import com.khoadonguyen.java_music_streaming.presentation.Adapter.SearchResultAdapter;
 
 import java.util.ArrayList;

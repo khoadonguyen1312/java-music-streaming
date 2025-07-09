@@ -1,4 +1,4 @@
-package com.khoadonguyen.java_music_streaming.presentation.core;
+package com.khoadonguyen.java_music_streaming.presentation.bottomSheet;
 
 import android.content.Context;
 import android.os.Bundle;

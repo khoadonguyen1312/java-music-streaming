@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 import android.text.format.DateUtils;
 
 import androidx.annotation.NonNull;
@@ -33,11 +32,8 @@ import com.khoadonguyen.java_music_streaming.R;
 import com.khoadonguyen.java_music_streaming.Service.Playlist.Playlist;
 import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
 import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
-import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 import com.khoadonguyen.java_music_streaming.Util.ChangeScreen;
-import com.khoadonguyen.java_music_streaming.presentation.bottomSheet.CurrentSongMoreBottomSheet;
 import com.khoadonguyen.java_music_streaming.presentation.bottomSheet.Output_speaker_bottomsheet;
-import com.khoadonguyen.java_music_streaming.presentation.core.CurrentSongFragmentBottomSheet;
 
 
 import java.time.Duration;
