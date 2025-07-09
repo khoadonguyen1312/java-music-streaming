@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.khoadonguyen.java_music_streaming.Model.Song;
+import com.khoadonguyen.java_music_streaming.Service.extractor.SourceExtractor;
 
 public class LoveSongRespository {
     private static String tag = "LoveSongRespository";
@@ -41,16 +42,15 @@ public class LoveSongRespository {
             if (callback != null) callback.onComplete(false);
             return;
         }
+        int source_id = SourceExtractor.getInstance().getCurrent_source_id();
 
-        firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(song.getId()).setValue(song.getUrl())
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(tag, "Thêm bài hát yêu thích thành công");
-                    if (callback != null) callback.onComplete(true);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(tag, "Lỗi khi thêm bài hát yêu thích: " + e.getMessage());
-                    if (callback != null) callback.onComplete(false);
-                });
+        firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(String.valueOf(source_id)).child(song.getId()).setValue(song.getUrl()).addOnSuccessListener(aVoid -> {
+            Log.d(tag, "Thêm bài hát yêu thích thành công");
+            if (callback != null) callback.onComplete(true);
+        }).addOnFailureListener(e -> {
+            Log.e(tag, "Lỗi khi thêm bài hát yêu thích: " + e.getMessage());
+            if (callback != null) callback.onComplete(false);
+        });
     }
 
     public interface SimpleCallback {
@@ -63,16 +63,15 @@ public class LoveSongRespository {
             if (callback != null) callback.onComplete(false);
             return;
         }
+        int source_id = SourceExtractor.getInstance().getCurrent_source_id();
 
-        firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(song.getId()).removeValue()
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(tag, "Xóa bài hát yêu thích thành công");
-                    if (callback != null) callback.onComplete(true);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(tag, "Lỗi khi xóa bài hát yêu thích: " + e.getMessage());
-                    if (callback != null) callback.onComplete(false);
-                });
+        firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(String.valueOf(source_id)).child(song.getId()).removeValue().addOnSuccessListener(aVoid -> {
+            Log.d(tag, "Xóa bài hát yêu thích thành công");
+            if (callback != null) callback.onComplete(true);
+        }).addOnFailureListener(e -> {
+            Log.e(tag, "Lỗi khi xóa bài hát yêu thích: " + e.getMessage());
+            if (callback != null) callback.onComplete(false);
+        });
     }
 
 
@@ -81,22 +80,22 @@ public class LoveSongRespository {
             callback.onResult(false);
             return;
         }
+        int source_id = SourceExtractor.getInstance().getCurrent_source_id();
 
-        firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(song.getId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        boolean exists = snapshot.exists();
-                        Log.d(tag, String.valueOf(exists));
-                        callback.onResult(exists);
-                    }
+        firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(String.valueOf(source_id)).child(song.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean exists = snapshot.exists();
+                Log.d(tag, String.valueOf(exists));
+                callback.onResult(exists);
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(tag, "Lỗi khi kiểm tra favorite: " + error.getMessage());
-                        callback.onResult(false);
-                    }
-                });
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(tag, "Lỗi khi kiểm tra favorite: " + error.getMessage());
+                callback.onResult(false);
+            }
+        });
 
 
     }
@@ -112,10 +111,11 @@ public class LoveSongRespository {
             callback.onResult(null);
             return;
         }
+        int source_id = SourceExtractor.getInstance().getCurrent_source_id();
 
-        firebaseDatabase.child(user_id).child(FAVORITE_NODE)
-                .limitToFirst(10)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+        firebaseDatabase.child(user_id).child(FAVORITE_NODE).child(String.valueOf(source_id))
+
+                .limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         callback.onResult(snapshot);

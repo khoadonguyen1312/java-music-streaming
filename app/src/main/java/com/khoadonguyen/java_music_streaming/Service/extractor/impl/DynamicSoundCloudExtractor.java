@@ -20,6 +20,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 
 import java.io.IOException;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,11 +36,11 @@ public class DynamicSoundCloudExtractor implements Extractor {
         return CompletableFuture.supplyAsync(() -> {
             try {
 
-                SoundcloudService soundcloudService = initService();
-                StreamExtractor streamExtractor = soundcloudService.getStreamExtractor(url);
-                if (streamExtractor != null) {
-                    streamExtractor.fetchPage();
-                    Song song = new Song.Builder().author(streamExtractor.getSubChannelName()).id(streamExtractor.getId()).url(streamExtractor.getUrl()).subtitlesStreams(null).audioLink(streamExtractor.getAudioStreams()).subtitlesStreams(streamExtractor.getSubtitles(MediaFormat.VTT)).title(streamExtractor.getName()).images(streamExtractor.getThumbnails()).source(Source.YOUTUBE).build();
+
+                StreamInfo streamInfo = StreamInfo.getInfo(url);
+                if (streamInfo != null) {
+
+                    Song song = new Song.Builder().duration(Duration.ofSeconds(streamInfo.getDuration())).author(streamInfo.getSubChannelName()).id(streamInfo.getId()).url(streamInfo.getUrl()).subtitlesStreams(null).audioLink(streamInfo.getAudioStreams()).subtitlesStreams(streamInfo.getSubtitles()).title(streamInfo.getName()).images(streamInfo.getThumbnails()).source(Source.SOUNDCLOUD).build();
 
 
                     Log.d(tag, "lấy thành công bài hát từ soundcloud có url :" + url);
@@ -71,7 +72,12 @@ public class DynamicSoundCloudExtractor implements Extractor {
                     searchExtractor.fetchPage();
                     List<InfoItem> infoItems = searchExtractor.getInitialPage().getItems();
                     for (var infoitem : infoItems) {
-                        songs.add(new Song.Builder().title(infoitem.getName()).images(infoitem.getThumbnails()).url(infoitem.getUrl()).source(Source.SOUNDCLOUD).build());
+                        songs.add(new Song.Builder()
+
+
+                                .title(infoitem.getName())
+                                .images(infoitem.getThumbnails())
+                                .url(infoitem.getUrl()).source(Source.SOUNDCLOUD).build());
                     }
                     return songs;
                 }
@@ -90,7 +96,26 @@ public class DynamicSoundCloudExtractor implements Extractor {
 
     @Override
     public List<Song> gsong(List<String> urls) {
-        return null;
+        List<CompletableFuture<Song>> futures = new ArrayList<>();
+
+        for (String url : urls) {
+
+            futures.add(gsong(url));
+        }
+
+        try {
+
+            CompletableFuture<Void> allDone = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+            allDone.join();
+
+
+            return futures.stream()
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching songs", e);
+        }
     }
 
     @Override

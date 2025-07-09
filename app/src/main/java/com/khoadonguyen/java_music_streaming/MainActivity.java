@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
@@ -224,6 +225,17 @@ public class MainActivity extends AppCompatActivity {
                             Song song = songs.get(songs.gIndex());
                             Glide.with(getBaseContext()).load(song.gHighImage()).transform(new RoundedCorners(30)).into(thumb);
                             title.setText(song.getTitle());
+                            song.loadDominantColor(getApplicationContext(), new Song.OnColorLoadedCallback() {
+                                @Override
+                                public void onColorReady(String hexColor) {
+                                    bottomSheet.setBackgroundColor(Color.parseColor(hexColor));
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                }
+                            });
                         }
                     });
                 }

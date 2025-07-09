@@ -30,10 +30,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     }
 
     private OnItemClickListener listener;
-    public  void setOnItemClickListener(OnItemClickListener listener)
-    {
-        this.listener =listener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
+
     public SearchResultAdapter(Context context, List<Song> songs) {
         this.context = context;
         this.songs = songs;
@@ -56,8 +57,10 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         if (source == Source.SOUNDCLOUD) {
             holder.source.setTextColor(0xffFF7601);
+            holder.source.setText("soundcloud");
         } else {
             holder.source.setTextColor(0xffFF3F33);
+            holder.source.setText("youtube");
 
         }
         holder.source.setText(source.toString());

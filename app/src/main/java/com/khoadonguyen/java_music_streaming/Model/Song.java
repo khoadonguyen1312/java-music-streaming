@@ -1,9 +1,21 @@
 package com.khoadonguyen.java_music_streaming.Model;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.media3.common.MediaItem;
+import androidx.palette.graphics.Palette;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.common.util.Hex;
 import com.khoadonguyen.java_music_streaming.Service.realtimedb.LoveSongRespository;
 
 import org.schabi.newpipe.extractor.Image;
@@ -13,6 +25,7 @@ import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class Song {
     private static String tag = "Song";
@@ -248,4 +261,50 @@ public class Song {
             return new Song(this);
         }
     }
+
+    public interface OnColorLoadedCallback {
+        void onColorReady(String hexColor);
+
+        void onError(Exception e);
+    }
+
+    /**
+     * lấy màu chủ đạo từ url ảnh
+     *
+     * @param context
+     * @param callback
+     */
+    public void loadDominantColor(Context context, OnColorLoadedCallback callback) {
+        String imageUrl = gHighImage();
+        if (imageUrl == null) {
+            callback.onColorReady("#888888"); // fallback màu xám
+            return;
+        }
+
+        Glide.with(context)
+                .asBitmap()
+                .load(imageUrl)
+                .override(100, 100)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        Palette.from(resource).generate(palette -> {
+                            int color = palette.getDominantColor(Color.GRAY);
+                            String hex = String.format("#%06X", (0xFFFFFF & color));
+                            callback.onColorReady(hex);
+                        });
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        callback.onError(new Exception("Failed to load image."));
+                    }
+                });
+    }
+
 }

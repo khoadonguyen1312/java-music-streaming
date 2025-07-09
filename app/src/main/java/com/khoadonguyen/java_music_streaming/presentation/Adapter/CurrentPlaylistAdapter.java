@@ -3,6 +3,7 @@ package com.khoadonguyen.java_music_streaming.presentation.Adapter;
 import static android.view.View.VISIBLE;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.khoadonguyen.java_music_streaming.Model.Song;
 import com.khoadonguyen.java_music_streaming.R;
+import com.khoadonguyen.java_music_streaming.Service.manager.AudioPlayerManager;
 
 import java.util.List;
 
@@ -48,6 +50,12 @@ public class CurrentPlaylistAdapter extends RecyclerView.Adapter<CurrentPlaylist
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Song song = songs.get(position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AudioPlayerManager.getAudioService().seekToSong(position);
+            }
+        });
         if (index_song == position) {
             holder.playlist_playing_icon.setVisibility(VISIBLE);
             holder.playlist_title.setTextColor(0xffDC2525);

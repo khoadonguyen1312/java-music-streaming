@@ -110,14 +110,26 @@ public class DynamicYoutubeExtractor implements Extractor {
 
     @Override
     public List<Song> gsong(List<String> urls) {
+        List<CompletableFuture<Song>> futures = new ArrayList<>();
+
+        for (String url : urls) {
+
+            futures.add(gsong(url));
+        }
 
         try {
 
+            CompletableFuture<Void> allDone = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+            allDone.join();
 
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+
+            return futures.stream()
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching songs", e);
         }
-        return null;
     }
 
 
